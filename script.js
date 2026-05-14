@@ -3,7 +3,6 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwnHqmmRSodSKpAfRZTytHg
 let students = [];
 
 /* SAVE STUDENT */
-
 async function saveStudent() {
 
     const studentName = document.getElementById("studentName").value.trim();
@@ -13,7 +12,6 @@ async function saveStudent() {
     const courseName = document.getElementById("courseName").value;
     const batch = document.getElementById("batch").value;
 
-    // VALIDATION
     if (!studentName || !asnNo || !enrollmentDate || !courseName) {
         alert("Please fill all required fields");
         return;
@@ -21,9 +19,7 @@ async function saveStudent() {
 
     try {
 
-        // ✅ FormData for Apps Script
         const formData = new FormData();
-
         formData.append("studentName", studentName);
         formData.append("mobileNo", mobileNo);
         formData.append("asnNo", asnNo);
@@ -31,31 +27,16 @@ async function saveStudent() {
         formData.append("courseName", courseName);
         formData.append("batch", batch);
 
-        // ✅ Send data
         await fetch(API_URL, {
             method: "POST",
             mode: "no-cors",
             body: formData
         });
 
-        // ✅ Add to local array (for table UI)
-        const newStudent = {
-            studentName,
-            mobileNo,
-            asnNo,
-            enrollmentDate,
-            courseName,
-            batch
-        };
-
-        students.push(newStudent);
-
-        loadStudents();
-
         clearForm();
 
-        // ✅ Success message
         setTimeout(() => {
+            loadStudents(); // reload from sheet
             alert("Saved successfully ✅");
         }, 800);
 
@@ -65,8 +46,7 @@ async function saveStudent() {
     }
 }
 
-/* RENDER TABLE */
-
+/* LOAD STUDENTS */
 async function loadStudents() {
     try {
 
@@ -89,45 +69,51 @@ async function loadStudents() {
     }
 }
 
-/* SEARCH */
+/* RENDER TABLE */
+function renderTable(data = students) {
 
+    const table = document.getElementById("studentTable");
+    table.innerHTML = "";
+
+    data.forEach((student, index) => {
+        table.innerHTML += `
+            <tr class="border-b">
+                <td class="p-2">${index + 1}</td>
+                <td class="p-2">${student.studentName}</td>
+                <td class="p-2">${student.mobileNo}</td>
+                <td class="p-2">${student.courseName}</td>
+                <td class="p-2">${student.asnNo}</td>
+                <td class="p-2">${student.batch}</td>
+                <td class="p-2">${student.enrollmentDate}</td>
+            </tr>
+        `;
+    });
+}
+
+/* SEARCH */
 function searchStudent() {
 
-    const search = document
-        .getElementById("search")
-        .value
-        .toLowerCase();
+    const search = document.getElementById("search").value.toLowerCase();
 
-    const filtered = students.filter(student => {
-
-        return (
-            (student.studentName || "").toLowerCase().includes(search) ||
-            (student.mobileNo || "").toLowerCase().includes(search) ||
-            (student.courseName || "").toLowerCase().includes(search) ||
-            (student.asnNo || "").toString().includes(search)
-        );
-    });
+    const filtered = students.filter(student =>
+        (student.studentName || "").toLowerCase().includes(search) ||
+        (student.mobileNo || "").toLowerCase().includes(search) ||
+        (student.courseName || "").toLowerCase().includes(search) ||
+        (student.asnNo || "").toString().includes(search)
+    );
 
     renderTable(filtered);
 }
 
-/* EXPORT EXCEL */
-
+/* EXPORT */
 function exportExcel() {
-
     const table = document.getElementById("studentTableExcel");
-
-    const workbook = XLSX.utils.table_to_book(table, {
-        sheet: "Students"
-    });
-
-    XLSX.writeFile(workbook, "Student_Data.xlsx");
+    const wb = XLSX.utils.table_to_book(table, { sheet: "Students" });
+    XLSX.writeFile(wb, "Student_Data.xlsx");
 }
 
-/* CLEAR FORM */
-
+/* CLEAR */
 function clearForm() {
-
     document.getElementById("studentName").value = "";
     document.getElementById("mobileNo").value = "";
     document.getElementById("asnNo").value = "";
@@ -136,4 +122,5 @@ function clearForm() {
     document.getElementById("batch").value = "";
 }
 
+/* LOAD ON START */
 window.onload = loadStudents;
