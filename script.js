@@ -44,6 +44,8 @@ async function loadStudents() {
 
 async function saveStudent() {
 
+    showLoader(true);
+
     const rowId =
         document.getElementById("rowId").value;
 
@@ -52,9 +54,6 @@ async function saveStudent() {
 
     const mobileNo =
         document.getElementById("mobileNo").value.trim();
-
-    const enrollmentNo =
-        document.getElementById("enrollmentNo").value.trim();
 
     const enrollmentDate =
         document.getElementById("enrollmentDate").value;
@@ -68,8 +67,13 @@ async function saveStudent() {
     const batchYear =
         document.getElementById("batchYear").value;
 
+    const enrollmentNo =
+        document.getElementById("enrollmentNo").value.trim();
+
 
     if (!studentName || !enrollmentDate || !courseName) {
+
+        showLoader(false);
 
         showToast("Please fill required fields", true);
 
@@ -116,6 +120,8 @@ async function saveStudent() {
 
             loadStudents();
 
+            showLoader(false);
+
             showToast(
                 editMode
                     ? "Student Updated Successfully"
@@ -130,6 +136,9 @@ async function saveStudent() {
             document.getElementById("formMode").innerText =
                 "Add Student";
 
+            // AUTO FOCUS
+            document.getElementById("studentName").focus();
+
         }, 1000);
 
     }
@@ -137,6 +146,8 @@ async function saveStudent() {
     catch (error) {
 
         console.error(error);
+
+        showLoader(false);
 
         showToast("Error Saving Student", true);
     }
@@ -511,24 +522,20 @@ function clearForm() {
 
 /* TOAST */
 
-function showToast(message, error = false) {
+function showLoader(show) {
 
-    const toast =
-        document.getElementById("toast");
+    const loader =
+        document.getElementById("formLoader");
 
-    toast.innerText = message;
+    if (show) {
 
-    toast.className = error
-        ? "fixed top-5 right-5 bg-red-500 text-white px-5 py-3 rounded shadow-lg z-50"
-        : "fixed top-5 right-5 bg-green-500 text-white px-5 py-3 rounded shadow-lg z-50";
+        loader.classList.remove("hidden");
+    }
 
-    toast.classList.remove("hidden");
+    else {
 
-    setTimeout(() => {
-
-        toast.classList.add("hidden");
-
-    }, 3000);
+        loader.classList.add("hidden");
+    }
 }
 
 
