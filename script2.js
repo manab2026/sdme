@@ -327,6 +327,10 @@ function renderTable(data = filteredStudents) {
 
     document.getElementById("pageNumber").innerText =
         currentPage;
+
+    applyTheme(
+        document.body.classList.contains("bg-gray-900")
+    );
 }
 
 
@@ -572,9 +576,122 @@ function formatInputDate(dateString) {
 
 function toggleDarkMode() {
 
-    document.body.classList.toggle("bg-gray-900");
+    const isDark =
+        !document.body.classList.contains("bg-gray-900");
 
-    document.body.classList.toggle("text-white");
+    applyTheme(isDark);
+}
+
+function replaceClasses(elements, removeClasses, addClasses) {
+
+    elements.forEach(element => {
+
+        element.classList.remove(...removeClasses);
+
+        element.classList.add(...addClasses);
+    });
+}
+
+function applyTheme(isDark) {
+
+    const body =
+        document.body;
+
+    body.classList.toggle("bg-gray-900", isDark);
+    body.classList.toggle("text-white", isDark);
+    body.classList.toggle("bg-gray-100", !isDark);
+    body.classList.toggle("text-gray-800", !isDark);
+
+    replaceClasses(
+        document.querySelectorAll(".bg-white"),
+        isDark ? ["bg-white"] : ["bg-gray-800"],
+        isDark ? ["bg-gray-800"] : ["bg-white"]
+    );
+
+    replaceClasses(
+        document.querySelectorAll(".bg-gray-50"),
+        isDark ? ["bg-gray-50"] : ["bg-gray-700"],
+        isDark ? ["bg-gray-700"] : ["bg-gray-50"]
+    );
+
+    replaceClasses(
+        document.querySelectorAll(".bg-gray-100"),
+        isDark ? ["bg-gray-100"] : ["bg-gray-700"],
+        isDark ? ["bg-gray-700"] : ["bg-gray-100"]
+    );
+
+    replaceClasses(
+        document.querySelectorAll(".bg-gray-200:not([disabled])"),
+        isDark ? ["bg-gray-200"] : ["bg-gray-700"],
+        isDark ? ["bg-gray-700"] : ["bg-gray-200"]
+    );
+
+    replaceClasses(
+        document.querySelectorAll(".text-gray-800"),
+        isDark ? ["text-gray-800"] : ["text-white"],
+        isDark ? ["text-white"] : ["text-gray-800"]
+    );
+
+    replaceClasses(
+        document.querySelectorAll(".text-gray-700"),
+        isDark ? ["text-gray-700"] : ["text-gray-200"],
+        isDark ? ["text-gray-200"] : ["text-gray-700"]
+    );
+
+    replaceClasses(
+        document.querySelectorAll(".text-gray-500"),
+        isDark ? ["text-gray-500"] : ["text-gray-300"],
+        isDark ? ["text-gray-300"] : ["text-gray-500"]
+    );
+
+    document
+        .querySelectorAll("input, select")
+        .forEach(field => {
+
+            field.classList.toggle("bg-gray-900", isDark);
+            field.classList.toggle("text-white", isDark);
+            field.classList.toggle("border-gray-600", isDark);
+            field.classList.toggle("bg-white", !isDark);
+            field.classList.toggle("text-gray-800", !isDark);
+            field.classList.toggle("border-gray-300", !isDark);
+        });
+
+    document
+        .querySelectorAll("label.border")
+        .forEach(label => {
+
+            label.classList.toggle("border-gray-600", isDark);
+            label.classList.toggle("border-gray-200", !isDark);
+        });
+
+    document
+        .querySelectorAll("thead")
+        .forEach(thead => {
+
+            thead.classList.toggle("bg-gray-700", isDark);
+            thead.classList.toggle("text-gray-100", isDark);
+            thead.classList.toggle("bg-gray-100", !isDark);
+            thead.classList.toggle("text-gray-800", !isDark);
+        });
+
+    document
+        .querySelectorAll("#studentTable tr")
+        .forEach(row => {
+
+            row.classList.toggle("border-gray-700", isDark);
+            row.classList.toggle("hover:bg-gray-700", isDark);
+            row.classList.toggle("hover:bg-gray-50", !isDark);
+        });
+
+    const themeIcon =
+        document.querySelector("[onclick='toggleDarkMode()'] i");
+
+    if (themeIcon) {
+
+        themeIcon.classList.toggle("fa-sun", isDark);
+        themeIcon.classList.toggle("fa-moon", !isDark);
+        themeIcon.classList.toggle("text-yellow-500", isDark);
+    }
 }
 
 function toggleFieldSettings() {
@@ -610,6 +727,21 @@ function toggleField(fieldId, enabled) {
     }
 }
 
+function updateRunningClock() {
+
+    const clock =
+        document.getElementById("runningClock");
+
+    if (!clock) return;
+
+    clock.innerText =
+        new Date().toLocaleTimeString("en-IN", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+        });
+}
+
 /* TOAST */
 
 function showToast(message, error = false) {
@@ -636,6 +768,10 @@ function showToast(message, error = false) {
 window.onload = () => {
 
     loadStudents();
+
+    updateRunningClock();
+
+    setInterval(updateRunningClock, 1000);
 
     // AUTO CURSOR ON PAGE LOAD
     document.getElementById("studentName").focus();
