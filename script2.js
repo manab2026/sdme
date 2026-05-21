@@ -1,4 +1,7 @@
 const API_URL = "https://script.google.com/macros/s/AKfycby4faax5wrl4ScBqO6I9q8guYBdTUKFN2o-mq8Pt_yngg_97eA6qvyU5fYY_mb9jF28og/exec";
+const ENROLLMENT_LOOKUP_URL = "https://script.google.com/macros/s/AKfycbw5i7hJ2hHthyMdhk-lsq_HhDA7ai1xW17V_01JpVv_WeMnDMBJbeH8Dw6HUAh8nSVnsw/exec";
+const MIN_LOOKUP_SEARCH_LENGTH = 3;
+const STUDENT_LOOKUP_DELAY = 400;
 
 let students = [];
 let filteredStudents = [];
@@ -7,6 +10,9 @@ let currentPage = 1;
 const rowsPerPage = 10;
 
 let editMode = false;
+let studentLookupTimer = null;
+let lastStudentLookupValue = "";
+let enrollmentLookupBy = "studentName";
 
 
 /* LOAD STUDENTS */
@@ -377,6 +383,144 @@ function searchStudent() {
 }
 
 
+/* STUDENT ENROLLMENT LOOKUP */
+
+function normalizeLookupValue(value) {
+
+    return value
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, " ");
+}
+
+function setStudentLookupStatus(message, error = false) {
+
+    const status =
+        document.getElementById("studentLookupStatus");
+
+    if (!status) return;
+
+    status.innerText = message;
+
+    status.classList.toggle("text-red-500", error);
+    status.classList.toggle("text-gray-500", !error);
+}
+
+function setEnrollmentLookupBy(value) {
+
+    enrollmentLookupBy = value;
+
+    lastStudentLookupValue = "";
+
+    setStudentLookupStatus("");
+
+    handleEnrollmentLookup(value);
+}
+
+function handleEnrollmentLookup(fieldName) {
+
+    if (fieldName !== enrollmentLookupBy) {
+
+        return;
+    }
+
+    clearTimeout(studentLookupTimer);
+
+    const lookupValue =
+        document.getElementById(fieldName).value.trim();
+
+    if (lookupValue.length < MIN_LOOKUP_SEARCH_LENGTH) {
+
+        setStudentLookupStatus("");
+
+        return;
+    }
+
+    studentLookupTimer =
+        setTimeout(() => {
+
+            lookupEnrollment(fieldName, lookupValue);
+
+        }, STUDENT_LOOKUP_DELAY);
+}
+
+async function lookupEnrollment(fieldName, lookupValue) {
+
+    if (!ENROLLMENT_LOOKUP_URL) {
+
+        setStudentLookupStatus(
+            "Add lookup Google Apps Script URL in script2.js"
+        );
+
+        return;
+    }
+
+    const normalizedLookupValue =
+        `${fieldName}:${normalizeLookupValue(lookupValue)}`;
+
+    if (normalizedLookupValue === lastStudentLookupValue) {
+
+        return;
+    }
+
+    lastStudentLookupValue = normalizedLookupValue;
+
+    try {
+
+        setStudentLookupStatus("Searching...");
+
+        const lookupUrl =
+            `${ENROLLMENT_LOOKUP_URL}?action=lookupEnrollment&lookupBy=${encodeURIComponent(fieldName)}&lookupValue=${encodeURIComponent(lookupValue)}`;
+
+        const res =
+            await fetch(lookupUrl);
+
+        const data =
+            await res.json();
+
+        if (!data || !data.found) {
+
+            setStudentLookupStatus("No matching enrollment found");
+
+            return;
+        }
+
+        document.getElementById("enrollmentNo").value =
+            data.enrollmentNo || "";
+
+        if (
+            data.mobileNo
+            && fieldName !== "mobileNo"
+            && !document.getElementById("mobileNo").value.trim()
+        ) {
+
+            document.getElementById("mobileNo").value =
+                data.mobileNo;
+        }
+
+        if (
+            data.studentName
+            && fieldName !== "studentName"
+            && !document.getElementById("studentName").value.trim()
+        ) {
+
+            document.getElementById("studentName").value =
+                data.studentName;
+        }
+
+        setStudentLookupStatus("Enrollment found");
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        setStudentLookupStatus("Enrollment lookup failed", true);
+    }
+}
+
+
 /* COURSE FILTER */
 
 function filterByCourse() {
@@ -518,6 +662,10 @@ function clearForm() {
     document.getElementById("enrollmentDate").value = "";
 
     document.getElementById("enrollmentNo").value = "";
+
+    setStudentLookupStatus("");
+
+    lastStudentLookupValue = "";
 
     // KEEP THESE
     // courseName
