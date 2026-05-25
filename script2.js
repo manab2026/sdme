@@ -38,7 +38,11 @@ async function loadStudents() {
 
         const res = await fetch(API_URL);
 
-        const data = await res.json();
+        const text = await res.text();
+
+        console.log("RAW DATA:", text);
+
+        const data = JSON.parse(text);
 
         students = sortStudentsDescending(data);
 
