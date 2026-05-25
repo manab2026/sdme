@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Typing Speed Test</title>
+
+  <style>
+    body{
+      font-family: Arial, sans-serif;
+      background:#f4f4f4;
+      padding:40px;
+    }
+
+    .container{
+      max-width:600px;
+      margin:auto;
+      background:#fff;
+      padding:25px;
+      border-radius:10px;
+      box-shadow:0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    h2{
+      margin-bottom:20px;
+    }
+
+    textarea{
+      width:100%;
+      height:150px;
+      padding:10px;
+      font-size:16px;
+      border:1px solid #ccc;
+      border-radius:6px;
+      resize:none;
+    }
+
+    .speed-box{
+      margin-top:20px;
+      display:flex;
+      gap:20px;
+      font-size:20px;
+      font-weight:bold;
+    }
+
+    .final-result{
+      margin-top:20px;
+      font-size:22px;
+      color:green;
+      font-weight:bold;
+    }
+
+    button{
+      margin-top:20px;
+      padding:12px 20px;
+      border:none;
+      background:#007bff;
+      color:#fff;
+      border-radius:6px;
+      cursor:pointer;
+      font-size:16px;
+    }
+
+    button:hover{
+      background:#0056b3;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Typing Speed Test</h2>
+
+  <form id="typingForm">
+
+    <textarea 
+      id="typingArea" 
+      placeholder="Start typing here..."
+    ></textarea>
+
+    <div class="speed-box">
+      <div>Current Speed: <span id="liveWPM">0</span> WPM</div>
+      <div>Characters: <span id="charCount">0</span></div>
+    </div>
+
+    <button type="submit">Submit</button>
+
+    <div class="final-result" id="finalResult"></div>
+
+  </form>
+</div>
+
+<script>
+
+let startTime;
+let typingStarted = false;
+
+const typingArea = document.getElementById("typingArea");
+const liveWPM = document.getElementById("liveWPM");
+const charCount = document.getElementById("charCount");
+const finalResult = document.getElementById("finalResult");
+
+typingArea.addEventListener("input", function () {
+
+    // Start timer on first typing
+    if (!typingStarted) {
+        startTime = new Date();
+        typingStarted = true;
+    }
+
+    const text = typingArea.value;
+
+    // Character count
+    charCount.innerText = text.length;
+
+    // Time calculation
+    const currentTime = new Date();
+    const timeDiff = (currentTime - startTime) / 1000 / 60; // minutes
+
+    // Word count
+    const words = text.trim().split(/\s+/).filter(word => word !== "").length;
+
+    // WPM calculation
+    const wpm = timeDiff > 0 ? Math.round(words / timeDiff) : 0;
+
+    liveWPM.innerText = wpm;
+
+});
+
+
+document.getElementById("typingForm").addEventListener("submit", function(e){
+
+    e.preventDefault();
+
+    const endTime = new Date();
+    const totalTime = (endTime - startTime) / 1000 / 60;
+
+    const text = typingArea.value;
+
+    const words = text.trim().split(/\s+/).filter(word => word !== "").length;
+
+    const finalWPM = totalTime > 0 ? Math.round(words / totalTime) : 0;
+
+    finalResult.innerHTML = `
+        Final Typing Speed: ${finalWPM} WPM
+    `;
+
+});
+
+</script>
+
+</body>
+</html>
