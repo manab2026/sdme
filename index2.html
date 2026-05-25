@@ -32,10 +32,211 @@
             }
         }
 
-        .typing-speed-card {
-            overflow: hidden;
-        }
+       .typing-speed-card{
 
+    width:100%;
+    background:#0f172a;
+    border-radius:24px;
+    padding:24px;
+    overflow:hidden;
+
+    box-shadow:
+        0 10px 40px rgba(0,0,0,.45);
+
+    position:relative;
+}
+
+.speed-top{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:25px;
+}
+
+
+.speed-title{
+
+    font-size:11px;
+    letter-spacing:2px;
+    color:#94a3b8;
+    margin-bottom:10px;
+}
+
+
+.speed-reading{
+
+    display:flex;
+    align-items:flex-end;
+    gap:8px;
+}
+.speed-reading span{
+
+    font-size:52px;
+    line-height:1;
+    font-weight:700;
+    color:white;
+}
+
+
+.speed-reading small{
+
+    color:#94a3b8;
+    font-size:14px;
+    margin-bottom:8px;
+}
+
+
+.char-counter{
+
+    font-size:13px;
+    color:#94a3b8;
+}
+
+.gauge-container{
+
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+
+.gauge{
+
+    width:100%;
+    max-width:320px;
+    aspect-ratio:2/1.3;
+    position:relative;
+}
+
+
+.gauge svg{
+
+    width:100%;
+    overflow:visible;
+}
+
+
+.gauge-bg{
+
+    fill:none;
+    stroke:#1e293b;
+    stroke-width:14;
+    stroke-linecap:round;
+}
+
+
+.gauge-progress{
+
+    fill:none;
+    stroke:url(#gradient);
+    stroke:#38bdf8;
+    stroke-width:14;
+    stroke-linecap:round;
+
+    stroke-dasharray:315;
+    stroke-dashoffset:315;
+
+    transition:
+        stroke-dashoffset .4s ease;
+}
+
+
+#needle{
+
+    position:absolute;
+
+    width:42%;
+    height:4px;
+
+    background:white;
+
+    left:50%;
+    bottom:18px;
+
+    transform-origin:left center;
+    transform:rotate(-120deg);
+
+    border-radius:999px;
+
+    z-index:10;
+
+    box-shadow:
+        0 0 10px rgba(255,255,255,.3);
+}
+
+
+#needle::after{
+
+    content:"";
+
+    position:absolute;
+
+    right:-6px;
+    top:50%;
+
+    width:12px;
+    height:12px;
+
+    border-radius:50%;
+
+    background:#38bdf8;
+
+    transform:translateY(-50%);
+}
+
+
+.gauge-center{
+
+    position:absolute;
+
+    width:18px;
+    height:18px;
+
+    background:white;
+
+    border-radius:50%;
+
+    left:50%;
+    bottom:10px;
+
+    transform:translateX(-50%);
+
+    z-index:20;
+}
+
+
+
+
+
+.l1{left:8%;bottom:15%;}
+.l2{left:17%;bottom:48%;}
+.l3{left:32%;bottom:73%;}
+.l4{left:50%;top:-2%;}
+.l5{right:32%;bottom:73%;}
+.l6{right:17%;bottom:48%;}
+.l7{right:8%;bottom:15%;}
+
+
+@media(max-width:640px){
+
+    .typing-speed-card{
+
+        padding:18px;
+        border-radius:18px;
+    }
+
+    .speed-reading span{
+
+        font-size:38px;
+    }
+
+    .gauge-label{
+
+        font-size:10px;
+    }
+}
         #gauge {
             position: relative;
             width: 190px;
@@ -315,61 +516,77 @@
 
                 </div>
 
-                <div class="typing-speed-card bg-white p-4 rounded-xl shadow">
+                <div class="typing-speed-card">
 
-                    <h2 class="text-xs text-gray-500 uppercase">
-                        Typing Speed
-                    </h2>
+    <div class="speed-top">
 
-                    <div class="mt-2 flex items-end justify-between">
+        <div>
 
-                        <div>
+            <div class="speed-title">
+                TYPING SPEED
+            </div>
 
-                            <div id="typingSpeedValue"
-                                class="typing-speed-value text-2xl font-bold">
+            <div class="speed-reading">
 
-                                0
+                <span id="typingSpeedValue">0</span>
 
-                            </div>
+                <small>WPM</small>
 
-                            <div class="text-xs text-gray-500 mt-1">
-                                WPM
-                            </div>
+            </div>
 
-                        </div>
+        </div>
 
-                        <div id="typingCharCount"
-                            class="text-xs text-gray-500">
-                            0 chars
-                        </div>
+        <div class="char-counter">
 
-                    </div>
+            <span id="typingCharCount">0</span>
+            chars
 
-                    <div id="gauge"
-                        aria-label="Typing speedometer">
+        </div>
 
-                        <div id="circle"></div>
+    </div>
 
-                        <div id="numbers">
-                            <span>0</span>
-                            <span>10</span>
-                            <span>20</span>
-                            <span>30</span>
-                            <span>40</span>
-                            <span>60</span>
-                            <span>80</span>
-                            <span>90</span>
-                            <span>100</span>
-                            <span>120</span>
-                        </div>
 
-                        <!-- <div id="mi-km">WPM</div> -->
+    <div class="gauge-container">
 
-                        <div id="needle"></div>
+        <div class="gauge">
 
-                    </div>
+            <svg viewBox="0 0 240 140">
 
-                </div>
+                <!-- Background Arc -->
+                <path
+                    d="M20 120 A100 100 0 0 1 220 120"
+                    class="gauge-bg"
+                />
+
+                <!-- Active Arc -->
+                <path
+                    id="gaugeProgress"
+                    d="M20 120 A100 100 0 0 1 220 120"
+                    class="gauge-progress"
+                />
+
+            </svg>
+
+            <!-- Needle -->
+            <div id="needle"></div>
+
+            <!-- Center -->
+            <div class="gauge-center"></div>
+
+            <!-- Numbers -->
+            <div class="gauge-label l1">0</div>
+            <div class="gauge-label l2">20</div>
+            <div class="gauge-label l3">40</div>
+            <div class="gauge-label l4">60</div>
+            <div class="gauge-label l5">80</div>
+            <div class="gauge-label l6">100</div>
+            <div class="gauge-label l7">120</div>
+
+        </div>
+
+    </div>
+
+</div>
 
                 <div class="bg-white rounded-xl shadow p-4">
 
