@@ -587,6 +587,9 @@ function handleEnrollmentLookup(fieldName) {
     const lookupValue =
         document.getElementById(fieldName).value.trim();
 
+    const courseShortName =
+        getSelectedCourseShortName();
+
     if (fieldName === "mobileNo") {
 
         const mobileDigits =
@@ -595,6 +598,13 @@ function handleEnrollmentLookup(fieldName) {
         if (mobileDigits.length < MOBILE_LOOKUP_DIGIT_LENGTH) {
 
             setStudentLookupStatus("");
+
+            return;
+        }
+
+        if (!courseShortName) {
+
+            setStudentLookupStatus("Select course to search enrollment");
 
             return;
         }
@@ -610,12 +620,25 @@ function handleEnrollmentLookup(fieldName) {
     studentLookupTimer =
         setTimeout(() => {
 
-            lookupEnrollment(fieldName, lookupValue);
+            lookupEnrollment(fieldName, lookupValue, courseShortName);
 
         }, STUDENT_LOOKUP_DELAY);
 }
 
-async function lookupEnrollment(fieldName, lookupValue) {
+function getSelectedCourseShortName() {
+
+    const courseField =
+        document.getElementById("courseName");
+
+    const selectedOption =
+        courseField.options[courseField.selectedIndex];
+
+    return selectedOption && selectedOption.value
+        ? selectedOption.text.trim()
+        : "";
+}
+
+async function lookupEnrollment(fieldName, lookupValue, courseShortName = "") {
 
     if (!ENROLLMENT_LOOKUP_URL) {
 
@@ -627,7 +650,7 @@ async function lookupEnrollment(fieldName, lookupValue) {
     }
 
     const normalizedLookupValue =
-        `${fieldName}:${normalizeLookupValue(lookupValue)}`;
+        `${fieldName}:${normalizeLookupValue(lookupValue)}:${normalizeLookupValue(courseShortName)}`;
 
     if (normalizedLookupValue === lastStudentLookupValue) {
 
@@ -641,7 +664,7 @@ async function lookupEnrollment(fieldName, lookupValue) {
         setStudentLookupStatus("Searching...");
 
         const lookupUrl =
-            `${ENROLLMENT_LOOKUP_URL}?action=lookupEnrollment&lookupBy=${encodeURIComponent(fieldName)}&lookupValue=${encodeURIComponent(lookupValue)}`;
+            `${ENROLLMENT_LOOKUP_URL}?action=lookupEnrollment&lookupBy=${encodeURIComponent(fieldName)}&lookupValue=${encodeURIComponent(lookupValue)}&courseName=${encodeURIComponent(courseShortName)}`;
 
         const res =
             await fetch(lookupUrl);
@@ -893,16 +916,16 @@ function formatInputDate(dateString) {
 
     if (!date) return "";
 
-    const day =
-        String(date.getDate()).padStart(2, "0");
+    const year =
+        date.getFullYear();
 
     const month =
         String(date.getMonth() + 1).padStart(2, "0");
 
-    const year =
-        date.getFullYear();
+    const day =
+        String(date.getDate()).padStart(2, "0");
 
-    return `${day}-${month}-${year}`;
+    return `${year}-${month}-${day}`;
 }
 
 

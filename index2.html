@@ -378,9 +378,8 @@
                     </label>
 
                     <input id="enrollmentDate"
-                        type="text"
+                        type="date"
                         tabindex="3"
-                        placeholder="DD-MM-YYYY"
                         oninput="handleEnrollmentDateChange()"
                         class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
 
@@ -397,6 +396,7 @@
 
                     <select id="courseName"
                         tabindex="4"
+                        onchange="handleEnrollmentLookup('mobileNo')"
                         class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
 
                         <option value="">Select Course</option>
