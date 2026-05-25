@@ -1,7 +1,22 @@
 const API_URL = "https://script.google.com/macros/s/AKfycby4faax5wrl4ScBqO6I9q8guYBdTUKFN2o-mq8Pt_yngg_97eA6qvyU5fYY_mb9jF28og/exec";
 const ENROLLMENT_LOOKUP_URL = "https://script.google.com/macros/s/AKfycbw5i7hJ2hHthyMdhk-lsq_HhDA7ai1xW17V_01JpVv_WeMnDMBJbeH8Dw6HUAh8nSVnsw/exec";
-const MIN_LOOKUP_SEARCH_LENGTH = 3;
+const MIN_NAME_LOOKUP_SEARCH_LENGTH = 3;
+const MOBILE_LOOKUP_DIGIT_LENGTH = 10;
 const STUDENT_LOOKUP_DELAY = 400;
+const MONTH_NAMES = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec"
+];
 
 let students = [];
 let filteredStudents = [];
@@ -12,7 +27,7 @@ const rowsPerPage = 10;
 let editMode = false;
 let studentLookupTimer = null;
 let lastStudentLookupValue = "";
-let enrollmentLookupBy = "studentName";
+let enrollmentLookupBy = "mobileNo";
 
 
 /* LOAD STUDENTS */
@@ -25,7 +40,7 @@ async function loadStudents() {
 
         const data = await res.json();
 
-        students = data;
+        students = sortStudentsDescending(data);
 
         filteredStudents = [...students];
 
@@ -62,7 +77,9 @@ async function saveStudent() {
         document.getElementById("mobileNo").value.trim();
 
     const enrollmentDate =
-        document.getElementById("enrollmentDate").value;
+        normalizeEnrollmentDate(
+            document.getElementById("enrollmentDate").value
+        );
 
     const courseName =
         document.getElementById("courseName").value;
@@ -81,7 +98,7 @@ async function saveStudent() {
 
         showLoader(false);
 
-        showToast("Please fill required fields", true);
+        showToast("Please fill required fields and date as DD-MM-YYYY", true);
 
         return;
     }
@@ -383,6 +400,147 @@ function searchStudent() {
 }
 
 
+/* SORTING */
+
+function sortStudentsDescending(data) {
+
+    return [...data].sort((a, b) => {
+
+        const rowA =
+            Number(a["Row ID"] || a["SL No"] || 0);
+
+        const rowB =
+            Number(b["Row ID"] || b["SL No"] || 0);
+
+        if (rowA || rowB) {
+
+            return rowB - rowA;
+        }
+
+        return getDateTime(b["Enrollment Date"])
+            - getDateTime(a["Enrollment Date"]);
+    });
+}
+
+
+/* ENROLLMENT DATE */
+
+function parseEnrollmentDate(dateString) {
+
+    if (!dateString) return null;
+
+    const value =
+        String(dateString).trim();
+
+    const ddmmyyyy =
+        value.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/);
+
+    if (ddmmyyyy) {
+
+        const day =
+            Number(ddmmyyyy[1]);
+
+        const month =
+            Number(ddmmyyyy[2]);
+
+        const year =
+            Number(ddmmyyyy[3]);
+
+        const date =
+            new Date(year, month - 1, day);
+
+        if (
+            date.getFullYear() === year
+            && date.getMonth() === month - 1
+            && date.getDate() === day
+        ) {
+
+            return date;
+        }
+    }
+
+    const yyyymmdd =
+        value.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+
+    if (yyyymmdd) {
+
+        const year =
+            Number(yyyymmdd[1]);
+
+        const month =
+            Number(yyyymmdd[2]);
+
+        const day =
+            Number(yyyymmdd[3]);
+
+        const date =
+            new Date(year, month - 1, day);
+
+        if (
+            date.getFullYear() === year
+            && date.getMonth() === month - 1
+            && date.getDate() === day
+        ) {
+
+            return date;
+        }
+    }
+
+    const parsedDate =
+        new Date(value);
+
+    if (!Number.isNaN(parsedDate.getTime())) {
+
+        return parsedDate;
+    }
+
+    return null;
+}
+
+function getDateTime(dateString) {
+
+    const date =
+        parseEnrollmentDate(dateString);
+
+    return date ? date.getTime() : 0;
+}
+
+function normalizeEnrollmentDate(dateString) {
+
+    const date =
+        parseEnrollmentDate(dateString);
+
+    if (!date) return "";
+
+    const year =
+        date.getFullYear();
+
+    const month =
+        String(date.getMonth() + 1).padStart(2, "0");
+
+    const day =
+        String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+}
+
+function handleEnrollmentDateChange() {
+
+    const date =
+        parseEnrollmentDate(
+            document.getElementById("enrollmentDate").value
+        );
+
+    if (!date) {
+
+        return;
+    }
+
+    document.getElementById("batchMonth").value =
+        MONTH_NAMES[date.getMonth()];
+}
+
+
 /* STUDENT ENROLLMENT LOOKUP */
 
 function normalizeLookupValue(value) {
@@ -429,7 +587,20 @@ function handleEnrollmentLookup(fieldName) {
     const lookupValue =
         document.getElementById(fieldName).value.trim();
 
-    if (lookupValue.length < MIN_LOOKUP_SEARCH_LENGTH) {
+    if (fieldName === "mobileNo") {
+
+        const mobileDigits =
+            lookupValue.replace(/\D/g, "");
+
+        if (mobileDigits.length < MOBILE_LOOKUP_DIGIT_LENGTH) {
+
+            setStudentLookupStatus("");
+
+            return;
+        }
+    }
+
+    else if (lookupValue.length < MIN_NAME_LOOKUP_SEARCH_LENGTH) {
 
         setStudentLookupStatus("");
 
@@ -704,7 +875,10 @@ function formatDate(dateString) {
 
     if (!dateString) return "";
 
-    const date = new Date(dateString);
+    const date =
+        parseEnrollmentDate(dateString);
+
+    if (!date) return "";
 
     return date.toLocaleDateString("en-GB");
 }
@@ -714,9 +888,21 @@ function formatInputDate(dateString) {
 
     if (!dateString) return "";
 
-    const date = new Date(dateString);
+    const date =
+        parseEnrollmentDate(dateString);
 
-    return date.toISOString().split('T')[0];
+    if (!date) return "";
+
+    const day =
+        String(date.getDate()).padStart(2, "0");
+
+    const month =
+        String(date.getMonth() + 1).padStart(2, "0");
+
+    const year =
+        date.getFullYear();
+
+    return `${day}-${month}-${year}`;
 }
 
 
