@@ -1,170 +1,91 @@
-(function () {
-    const MAX_WPM = 120;
-    const FORM_FIELD_IDS = [
-        "studentName",
-        "mobileNo",
-        "enrollmentDate",
-        "batchYear",
-        "enrollmentNo"
-    ];
+// typingSpeed.js
 
-    let startTime = null;
-    let typedCharacters = 0;
-    let lastLengths = {};
+let typingStartTime = null;
 
-    function getFieldValueLength(field) {
-        return String(field.value || "").length;
-    }
+function updateTypingSpeed(wpm, chars = 0){
 
-    function getFields() {
-        return FORM_FIELD_IDS
-            .map(id => document.getElementById(id))
-            .filter(Boolean);
-    }
+    const maxSpeed = 120;
 
-    function cacheFieldLengths() {
-        lastLengths = {};
+    const speed =
+        Math.min(wpm, maxSpeed);
 
-        getFields().forEach(field => {
-            lastLengths[field.id] = getFieldValueLength(field);
-        });
-    }
+    document.getElementById(
+        "typingSpeedValue"
+    ).innerText = speed;
 
-    function calculateWpm() {
-        if (!startTime) return 0;
+    document.getElementById(
+        "typingCharCount"
+    ).innerText = chars;
 
-        const elapsedMinutes =
-            (Date.now() - startTime) / 60000;
+    const degree =
+        -120 + (speed / maxSpeed) * 240;
 
-        if (elapsedMinutes <= 0) return 0;
+    TweenLite.to("#needle", 0.4, {
+        rotation: degree
+    });
 
-        return Math.round((typedCharacters / 5) / elapsedMinutes);
-    }
+    const circumference = 315;
 
-    function setGauge(wpm) {
-        const value =
-            document.getElementById("typingSpeedValue");
+    const offset =
+        circumference -
+        (speed / maxSpeed) * circumference;
 
-        const chars =
-            document.getElementById("typingCharCount");
+    document.getElementById(
+        "gaugeProgress"
+    ).style.strokeDashoffset = offset;
+}
 
-        const needle =
-            document.getElementById("needle");
 
-        const readout =
-            document.getElementById("mi-km");
+function startTypingTracker(inputIds = []){
 
-        if (value) {
-            value.innerText = wpm;
-        }
+    inputIds.forEach(id => {
 
-        if (chars) {
-            chars.innerText = `${typedCharacters} chars`;
-        }
+        const input =
+            document.getElementById(id);
 
-        if (readout) {
-            readout.innerText = `${wpm} WPM`;
-        }
+        if(!input) return;
 
-        if (needle) {
-            const cappedSpeed =
-                Math.min(Math.max(wpm, 0), MAX_WPM);
+        input.addEventListener("input", () => {
 
-            const rotation =
-                150 + (cappedSpeed / MAX_WPM) * 240;
+            if(!typingStartTime){
 
-            if (window.TweenLite) {
-                window.TweenLite.to(needle, 0.35, {
-                    rotation,
-                    ease: window.Power2 ? window.Power2.easeOut : undefined
-                });
+                typingStartTime = Date.now();
             }
-            else {
-                needle.style.transform =
-                    `rotate(${rotation}deg)`;
-            }
-        }
-    }
 
-    function resetTypingSpeed() {
-        startTime = null;
-        typedCharacters = 0;
-        cacheFieldLengths();
-        setGauge(0);
-    }
+            let totalText = "";
 
-    function updateTypingSpeed(event) {
-        const field = event.currentTarget;
-        const previousLength =
-            lastLengths[field.id] || 0;
+            inputIds.forEach(fieldId => {
 
-        const currentLength =
-            getFieldValueLength(field);
+                const field =
+                    document.getElementById(fieldId);
 
-        const addedCharacters =
-            Math.max(currentLength - previousLength, 0);
+                if(field){
 
-        lastLengths[field.id] = currentLength;
+                    totalText +=
+                        " " + field.value;
+                }
+            });
 
-        if (addedCharacters === 0) {
-            setGauge(calculateWpm());
-            return;
-        }
+            const chars =
+                totalText.length;
 
-        if (!startTime) {
-            startTime = Date.now();
-        }
+            const words =
+                totalText
+                .trim()
+                .split(/\s+/)
+                .filter(Boolean)
+                .length;
 
-        typedCharacters += addedCharacters;
-        setGauge(calculateWpm());
-    }
+            const minutes =
+                (Date.now() - typingStartTime)
+                / 1000 / 60;
 
-    function watchFormFields() {
-        getFields().forEach(field => {
-            field.addEventListener("input", updateTypingSpeed);
-            field.addEventListener("change", updateTypingSpeed);
+            const wpm =
+                minutes > 0
+                ? Math.round(words / minutes)
+                : 0;
+
+            updateTypingSpeed(wpm, chars);
         });
-    }
-
-    function wrapFormHelpers() {
-        if (typeof window.clearForm === "function") {
-            const originalClearForm = window.clearForm;
-
-            window.clearForm = function () {
-                const result =
-                    originalClearForm.apply(this, arguments);
-
-                resetTypingSpeed();
-
-                return result;
-            };
-        }
-
-        if (typeof window.editStudent === "function") {
-            const originalEditStudent = window.editStudent;
-
-            window.editStudent = function () {
-                const result =
-                    originalEditStudent.apply(this, arguments);
-
-                resetTypingSpeed();
-
-                return result;
-            };
-        }
-    }
-
-    function initTypingSpeedometer() {
-        cacheFieldLengths();
-        watchFormFields();
-        wrapFormHelpers();
-        setGauge(0);
-    }
-
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", initTypingSpeedometer);
-    }
-    else {
-        initTypingSpeedometer();
-    }
-})();
+    });
+}
