@@ -36,29 +36,47 @@ async function loadStudents() {
 
     try {
 
+        console.log("STEP 1");
+
         const res = await fetch(API_URL);
+
+        console.log("STEP 2");
 
         const text = await res.text();
 
-        console.log("RAW DATA:", text);
+        console.log("STEP 3", text);
 
         const data = JSON.parse(text);
 
+        console.log("STEP 4", data);
+
         students = sortStudentsDescending(data);
+
+        console.log("STEP 5");
 
         filteredStudents = [...students];
 
+        console.log("STEP 6");
+
         updateDashboard();
+
+        console.log("STEP 7");
 
         populateCourseFilter();
 
+        console.log("STEP 8");
+
         renderTable();
+
+        console.log("STEP 9 SUCCESS");
 
     }
 
     catch (error) {
 
-        console.error(error);
+        console.error("FULL ERROR:", error);
+
+        alert(error.message);
 
         showToast("Error loading data", true);
     }
