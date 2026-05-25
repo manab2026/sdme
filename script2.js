@@ -806,8 +806,7 @@ function prevPage() {
 
 function updateDashboard() {
 
-    document.getElementById("studentCount").innerText =
-        students.length;
+    document.getElementById("studentCount").innerText =students.length;
 
     const courses = [
 
