@@ -19,11 +19,238 @@
     <!-- XLSX -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
+    <!-- Speedometer plugin dependencies -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/plugins/CSSPlugin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/easing/EasePack.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/TweenLite.min.js"></script>
+
     <style>
         @media (min-width: 1024px) {
             .student-layout {
                 grid-template-columns: 12% minmax(0, 1fr);
             }
+        }
+
+        .typing-speed-card {
+            overflow: hidden;
+        }
+
+        #gauge {
+            position: relative;
+            width: 190px;
+            height: 150px;
+            margin: 12px auto 0;
+            background: #000000;
+            overflow: hidden;
+        }
+
+        #gauge::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 17px;
+            width: 158px;
+            height: 158px;
+            border-radius: 50%;
+            background: repeating-conic-gradient(
+                from 210deg,
+                #ffffff 0deg 2deg,
+                transparent 2deg 10deg
+            );
+            mask: radial-gradient(
+                circle,
+                transparent 0 68px,
+                #000000 69px 79px,
+                transparent 80px
+            );
+            -webkit-mask: radial-gradient(
+                circle,
+                transparent 0 68px,
+                #000000 69px 79px,
+                transparent 80px
+            );
+            transform: translateX(-50%);
+        }
+
+        #circle {
+            position: absolute;
+            left: 50%;
+            top: 36px;
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: #242424;
+            box-shadow: 0 0 18px 7px rgba(255, 255, 255, 0.28);
+            transform: translateX(-50%);
+        }
+
+        #circle::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #0f172a;
+            border: 2px solid #ffffff;
+            transform: translate(-50%, -50%);
+        }
+
+        #numbers {
+            position: absolute;
+            inset: 0;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            font-weight: 400;
+        }
+
+        #numbers span {
+            position: absolute;
+            transform: translate(-50%, -50%);
+        }
+
+        #numbers span::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: -19px;
+            width: 3px;
+            height: 11px;
+            background: #ffffff;
+            transform-origin: 50% 83px;
+            display: none;
+        }
+
+        #numbers span:nth-child(1) {
+            left: 26px;
+            top: 116px;
+        }
+
+        #numbers span:nth-child(1)::before {
+            transform: translateX(-50%) rotate(-115deg);
+        }
+
+        #numbers span:nth-child(2) {
+            left: 39px;
+            top: 91px;
+        }
+
+        #numbers span:nth-child(2)::before {
+            transform: translateX(-50%) rotate(-92deg);
+        }
+
+        #numbers span:nth-child(3) {
+            left: 52px;
+            top: 70px;
+        }
+
+        #numbers span:nth-child(3)::before {
+            transform: translateX(-50%) rotate(-70deg);
+        }
+
+        #numbers span:nth-child(4) {
+            left: 71px;
+            top: 47px;
+        }
+
+        #numbers span:nth-child(4)::before {
+            transform: translateX(-50%) rotate(-48deg);
+        }
+
+        #numbers span:nth-child(5) {
+            left: 94px;
+            top: 35px;
+        }
+
+        #numbers span:nth-child(5)::before {
+            transform: translateX(-50%) rotate(-24deg);
+        }
+
+        #numbers span:nth-child(6) {
+            left: 119px;
+            top: 37px;
+        }
+
+        #numbers span:nth-child(6)::before {
+            transform: translateX(-50%) rotate(0deg);
+        }
+
+        #numbers span:nth-child(7) {
+            left: 142px;
+            top: 49px;
+        }
+
+        #numbers span:nth-child(7)::before {
+            transform: translateX(-50%) rotate(24deg);
+        }
+
+        #numbers span:nth-child(8) {
+            left: 158px;
+            top: 71px;
+        }
+
+        #numbers span:nth-child(8)::before {
+            transform: translateX(-50%) rotate(48deg);
+        }
+
+        #numbers span:nth-child(9) {
+            left: 164px;
+            top: 96px;
+        }
+
+        #numbers span:nth-child(9)::before {
+            transform: translateX(-50%) rotate(70deg);
+        }
+
+        #numbers span:nth-child(10) {
+            left: 154px;
+            top: 120px;
+        }
+
+        #numbers span:nth-child(10)::before {
+            transform: translateX(-50%) rotate(92deg);
+        }
+
+        #mi-km {
+            position: absolute;
+            left: 50%;
+            bottom: 10px;
+            width: 104px;
+            height: 24px;
+            border: 1px solid #2b2b2b;
+            background: #1b1b1b;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0;
+            line-height: 22px;
+            text-align: center;
+            transform: translateX(-50%);
+        }
+
+        #needle {
+            position: absolute;
+            left: 50%;
+            top: 61px;
+            width: 82px;
+            height: 4px;
+            background: #ff1515;
+            border-radius: 999px;
+            transform: rotate(-135deg);
+            transform-origin: 0 50%;
+            box-shadow: 0 0 2px rgba(255, 0, 0, 0.7);
+        }
+
+        #needle::after {
+            content: none;
+        }
+
+        .typing-speed-value {
+            line-height: 1;
         }
     </style>
 
@@ -88,16 +315,57 @@
 
                 </div>
 
-                <div class="bg-white p-4 rounded-xl shadow">
+                <div class="typing-speed-card bg-white p-4 rounded-xl shadow">
 
                     <h2 class="text-xs text-gray-500 uppercase">
-                        Courses
+                        Typing Speed
                     </h2>
 
-                    <div id="courseCount"
-                        class="text-2xl font-bold mt-1">
+                    <div class="mt-2 flex items-end justify-between">
 
-                        0
+                        <div>
+
+                            <div id="typingSpeedValue"
+                                class="typing-speed-value text-2xl font-bold">
+
+                                0
+
+                            </div>
+
+                            <div class="text-xs text-gray-500 mt-1">
+                                WPM
+                            </div>
+
+                        </div>
+
+                        <div id="typingCharCount"
+                            class="text-xs text-gray-500">
+                            0 chars
+                        </div>
+
+                    </div>
+
+                    <div id="gauge"
+                        aria-label="Typing speedometer">
+
+                        <div id="circle"></div>
+
+                        <div id="numbers">
+                            <span>0</span>
+                            <span>10</span>
+                            <span>20</span>
+                            <span>30</span>
+                            <span>40</span>
+                            <span>60</span>
+                            <span>80</span>
+                            <span>90</span>
+                            <span>100</span>
+                            <span>120</span>
+                        </div>
+
+                        <div id="mi-km">WPM</div>
+
+                        <div id="needle"></div>
 
                     </div>
 
@@ -584,6 +852,7 @@
     </div>
 
     <script src="script2.js"></script>
+    <script src="typingSpeed.js"></script>
 
 </body>
 

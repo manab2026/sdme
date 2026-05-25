@@ -1,153 +1,859 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Typing Speed Test</title>
 
-  <style>
-    body{
-      font-family: Arial, sans-serif;
-      background:#f4f4f4;
-      padding:40px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    .container{
-      max-width:600px;
-      margin:auto;
-      background:#fff;
-      padding:25px;
-      border-radius:10px;
-      box-shadow:0 2px 10px rgba(0,0,0,0.1);
-    }
+    <title>Student Master</title>
 
-    h2{
-      margin-bottom:20px;
-    }
+    <!-- Tailwind -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
 
-    textarea{
-      width:100%;
-      height:150px;
-      padding:10px;
-      font-size:16px;
-      border:1px solid #ccc;
-      border-radius:6px;
-      resize:none;
-    }
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-    .speed-box{
-      margin-top:20px;
-      display:flex;
-      gap:20px;
-      font-size:20px;
-      font-weight:bold;
-    }
+    <!-- XLSX -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
-    .final-result{
-      margin-top:20px;
-      font-size:22px;
-      color:green;
-      font-weight:bold;
-    }
+    <!-- Speedometer plugin dependencies -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/plugins/CSSPlugin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/easing/EasePack.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/TweenLite.min.js"></script>
 
-    button{
-      margin-top:20px;
-      padding:12px 20px;
-      border:none;
-      background:#007bff;
-      color:#fff;
-      border-radius:6px;
-      cursor:pointer;
-      font-size:16px;
-    }
+    <style>
+        @media (min-width: 1024px) {
+            .student-layout {
+                grid-template-columns: 12% minmax(0, 1fr);
+            }
+        }
 
-    button:hover{
-      background:#0056b3;
-    }
-  </style>
+        .typing-speed-card {
+            overflow: hidden;
+        }
+
+        #gauge {
+            position: relative;
+            width: 190px;
+            height: 150px;
+            margin: 12px auto 0;
+            background: #000000;
+            overflow: hidden;
+        }
+
+        #gauge::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 17px;
+            width: 158px;
+            height: 158px;
+            border-radius: 50%;
+            background: repeating-conic-gradient(
+                from 210deg,
+                #ffffff 0deg 2deg,
+                transparent 2deg 10deg
+            );
+            mask: radial-gradient(
+                circle,
+                transparent 0 68px,
+                #000000 69px 79px,
+                transparent 80px
+            );
+            -webkit-mask: radial-gradient(
+                circle,
+                transparent 0 68px,
+                #000000 69px 79px,
+                transparent 80px
+            );
+            transform: translateX(-50%);
+        }
+
+        #circle {
+            position: absolute;
+            left: 50%;
+            top: 36px;
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: #242424;
+            box-shadow: 0 0 18px 7px rgba(255, 255, 255, 0.28);
+            transform: translateX(-50%);
+        }
+
+        #circle::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #0f172a;
+            border: 2px solid #ffffff;
+            transform: translate(-50%, -50%);
+        }
+
+        #numbers {
+            position: absolute;
+            inset: 0;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            font-weight: 400;
+        }
+
+        #numbers span {
+            position: absolute;
+            transform: translate(-50%, -50%);
+        }
+
+        #numbers span::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: -19px;
+            width: 3px;
+            height: 11px;
+            background: #ffffff;
+            transform-origin: 50% 83px;
+            display: none;
+        }
+
+        #numbers span:nth-child(1) {
+            left: 26px;
+            top: 116px;
+        }
+
+        #numbers span:nth-child(1)::before {
+            transform: translateX(-50%) rotate(-115deg);
+        }
+
+        #numbers span:nth-child(2) {
+            left: 39px;
+            top: 91px;
+        }
+
+        #numbers span:nth-child(2)::before {
+            transform: translateX(-50%) rotate(-92deg);
+        }
+
+        #numbers span:nth-child(3) {
+            left: 52px;
+            top: 70px;
+        }
+
+        #numbers span:nth-child(3)::before {
+            transform: translateX(-50%) rotate(-70deg);
+        }
+
+        #numbers span:nth-child(4) {
+            left: 71px;
+            top: 47px;
+        }
+
+        #numbers span:nth-child(4)::before {
+            transform: translateX(-50%) rotate(-48deg);
+        }
+
+        #numbers span:nth-child(5) {
+            left: 94px;
+            top: 35px;
+        }
+
+        #numbers span:nth-child(5)::before {
+            transform: translateX(-50%) rotate(-24deg);
+        }
+
+        #numbers span:nth-child(6) {
+            left: 119px;
+            top: 37px;
+        }
+
+        #numbers span:nth-child(6)::before {
+            transform: translateX(-50%) rotate(0deg);
+        }
+
+        #numbers span:nth-child(7) {
+            left: 142px;
+            top: 49px;
+        }
+
+        #numbers span:nth-child(7)::before {
+            transform: translateX(-50%) rotate(24deg);
+        }
+
+        #numbers span:nth-child(8) {
+            left: 158px;
+            top: 71px;
+        }
+
+        #numbers span:nth-child(8)::before {
+            transform: translateX(-50%) rotate(48deg);
+        }
+
+        #numbers span:nth-child(9) {
+            left: 164px;
+            top: 96px;
+        }
+
+        #numbers span:nth-child(9)::before {
+            transform: translateX(-50%) rotate(70deg);
+        }
+
+        #numbers span:nth-child(10) {
+            left: 154px;
+            top: 120px;
+        }
+
+        #numbers span:nth-child(10)::before {
+            transform: translateX(-50%) rotate(92deg);
+        }
+
+        #mi-km {
+            position: absolute;
+            left: 50%;
+            bottom: 10px;
+            width: 104px;
+            height: 24px;
+            border: 1px solid #2b2b2b;
+            background: #1b1b1b;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0;
+            line-height: 22px;
+            text-align: center;
+            transform: translateX(-50%);
+        }
+
+        #needle {
+            position: absolute;
+            left: 50%;
+            top: 61px;
+            width: 82px;
+            height: 4px;
+            background: #ff1515;
+            border-radius: 999px;
+            transform: rotate(-135deg);
+            transform-origin: 0 50%;
+            box-shadow: 0 0 2px rgba(255, 0, 0, 0.7);
+        }
+
+        #needle::after {
+            content: none;
+        }
+
+        .typing-speed-value {
+            line-height: 1;
+        }
+    </style>
+
 </head>
-<body>
 
-<div class="container">
-  <h2>Typing Speed Test</h2>
+<body class="bg-gray-100 text-gray-800 transition duration-300">
 
-  <form id="typingForm">
+    <div class="w-full px-4 py-4">
 
-    <textarea 
-      id="typingArea" 
-      placeholder="Start typing here..."
-    ></textarea>
+        <!-- TOP BAR -->
 
-    <div class="speed-box">
-      <div>Current Speed: <span id="liveWPM">0</span> WPM</div>
-      <div>Characters: <span id="charCount">0</span></div>
+        <div class="flex justify-between items-center mb-3">
+
+            <h1 class="text-xl font-bold tracking-wide">
+                Student Master
+            </h1>
+
+            <div class="flex items-center gap-3">
+
+                <div class="bg-blue-600 shadow rounded-lg px-4 py-1 text-right">
+
+                    <div id="runningClock"
+                        class="text-lg font-bold text-white tracking-wide">
+                        --:--:--
+                    </div>
+
+                </div>
+
+                <button onclick="toggleDarkMode()"
+                    tabindex="50"
+                    class="w-10 h-10 rounded-full bg-white shadow hover:bg-gray-200 transition">
+
+                    <i class="fas fa-moon"></i>
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- MAIN LAYOUT -->
+
+        <div class="student-layout grid grid-cols-1 gap-4 mb-5">
+
+            <!-- LEFT SIDE -->
+
+            <div class="space-y-3">
+
+                <div class="bg-white p-4 rounded-xl shadow">
+
+                    <h2 class="text-xs text-gray-500 uppercase">
+                        Total Students
+                    </h2>
+
+                    <div id="studentCount"
+                        class="text-2xl font-bold mt-1">
+
+                        0
+
+                    </div>
+
+                </div>
+
+                <div class="typing-speed-card bg-white p-4 rounded-xl shadow">
+
+                    <h2 class="text-xs text-gray-500 uppercase">
+                        Typing Speed
+                    </h2>
+
+                    <div class="mt-2 flex items-end justify-between">
+
+                        <div>
+
+                            <div id="typingSpeedValue"
+                                class="typing-speed-value text-2xl font-bold">
+
+                                0
+
+                            </div>
+
+                            <div class="text-xs text-gray-500 mt-1">
+                                WPM
+                            </div>
+
+                        </div>
+
+                        <div id="typingCharCount"
+                            class="text-xs text-gray-500">
+                            0 chars
+                        </div>
+
+                    </div>
+
+                    <div id="gauge"
+                        aria-label="Typing speedometer">
+
+                        <div id="circle"></div>
+
+                        <div id="numbers">
+                            <span>0</span>
+                            <span>10</span>
+                            <span>20</span>
+                            <span>30</span>
+                            <span>40</span>
+                            <span>60</span>
+                            <span>80</span>
+                            <span>90</span>
+                            <span>100</span>
+                            <span>120</span>
+                        </div>
+
+                        <div id="mi-km">WPM</div>
+
+                        <div id="needle"></div>
+
+                    </div>
+
+                </div>
+
+                <div class="bg-white rounded-xl shadow p-4">
+
+                    <div class="space-y-3">
+
+                        <input type="text"
+                            id="search"
+                            placeholder="Search student..."
+                            onkeyup="searchStudent()"
+                            class="w-full border rounded-lg p-2 text-sm">
+
+                        <select id="courseFilter"
+                            onchange="filterByCourse()"
+                            class="w-full border rounded-lg p-2 text-sm">
+                            <option value="">All Courses</option>
+                        </select>
+
+                        <button onclick="exportExcel()"
+                            class="w-full bg-green-600 hover:bg-green-700 text-white rounded-lg p-2 text-sm font-medium">
+                            Export Excel
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- MIDDLE SIDE -->
+
+            <div>
+
+                <div class="relative bg-white rounded-xl shadow p-5">
+
+            <!-- LOADER -->
+
+            <div id="formLoader"
+                class="hidden absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-50 rounded-xl">
+
+                <div class="flex flex-col items-center gap-4">
+
+                    <div class="animate-spin rounded-full h-10 w-10 border-b-4 border-blue-600"></div>
+
+                    <div class="text-sm font-medium text-gray-700">
+                        Saving Student...
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- HEADER -->
+
+            <div class="flex justify-between items-center mb-5">
+
+                <div class="flex items-center gap-4">
+
+                    <h2 class="text-xl font-semibold text-gray-800">
+                        Student Form
+                    </h2>
+
+                    <div id="formMode"
+                        class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
+
+                        Add Mode
+
+                    </div>
+
+                </div>
+
+
+                <!-- SETTINGS BUTTON -->
+
+                <div class="relative">
+
+                    <button onclick="toggleFieldSettings()"
+                        class="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 transition flex items-center justify-center">
+
+                        <i class="fas fa-sliders-h text-gray-700"></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- FIELD SETTINGS -->
+
+            <div id="fieldSettings"
+                class="hidden mb-5 border border-gray-200 rounded-xl p-4 bg-gray-50">
+
+                <div class="flex items-center justify-between mb-4">
+
+                    <h3 class="font-semibold text-gray-700">
+                        Enable / Disable Fields
+                    </h3>
+
+                    <div class="text-xs text-gray-500">
+                        Toggle form fields
+                    </div>
+
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+
+                    <label class="flex items-center gap-2 bg-white p-2 rounded-lg border">
+
+                        <input type="checkbox"
+                            checked
+                            onchange="toggleField('studentName', this.checked)">
+
+                        Student Name
+
+                    </label>
+
+                    <label class="flex items-center gap-2 bg-white p-2 rounded-lg border">
+
+                        <input type="checkbox"
+                            checked
+                            onchange="toggleField('mobileNo', this.checked)">
+
+                        Mobile Number
+
+                    </label>
+
+                    <label class="flex items-center gap-2 bg-white p-2 rounded-lg border">
+
+                        <input type="checkbox"
+                            checked
+                            onchange="toggleField('enrollmentDate', this.checked)">
+
+                        Enrollment Date
+
+                    </label>
+
+                    <label class="flex items-center gap-2 bg-white p-2 rounded-lg border">
+
+                        <input type="checkbox"
+                            checked
+                            onchange="toggleField('courseName', this.checked)">
+
+                        Course
+
+                    </label>
+
+                    <label class="flex items-center gap-2 bg-white p-2 rounded-lg border">
+
+                        <input type="checkbox"
+                            checked
+                            onchange="toggleField('batchMonth', this.checked)">
+
+                        Batch Month
+
+                    </label>
+
+                    <label class="flex items-center gap-2 bg-white p-2 rounded-lg border">
+
+                        <input type="checkbox"
+                            checked
+                            onchange="toggleField('batchYear', this.checked)">
+
+                        Batch Year
+
+                    </label>
+
+                    <label class="flex items-center gap-2 bg-white p-2 rounded-lg border">
+
+                        <input type="checkbox"
+                            checked
+                            onchange="toggleField('enrollmentNo', this.checked)">
+
+                        Enrollment Number
+
+                    </label>
+
+                </div>
+
+                <div class="mt-4 border-t border-gray-200 pt-4">
+
+                    <h4 class="font-semibold text-gray-700 mb-3">
+                        Enrollment Lookup By
+                    </h4>
+
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+
+                        <label class="flex items-center gap-2 bg-white p-2 rounded-lg border">
+
+                            <input type="radio"
+                                name="enrollmentLookupBy"
+                                value="studentName"
+                                onchange="setEnrollmentLookupBy(this.value)">
+
+                            Student Name
+
+                        </label>
+
+                        <label class="flex items-center gap-2 bg-white p-2 rounded-lg border">
+
+                            <input type="radio"
+                                name="enrollmentLookupBy"
+                                value="mobileNo"
+                                checked
+                                onchange="setEnrollmentLookupBy(this.value)">
+
+                            Mobile Number
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- HIDDEN ID -->
+
+            <input type="hidden" id="rowId">
+
+
+            <!-- FORM GRID -->
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+
+                <!-- STUDENT NAME -->
+
+                <div>
+
+                    <label class="text-sm font-semibold block mb-2 text-gray-700">
+                        Student Name *
+                    </label>
+
+                    <input id="studentName"
+                        type="text"
+                        tabindex="1"
+                        placeholder="Enter Student Name"
+                        oninput="handleEnrollmentLookup('studentName')"
+                        class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+
+                    <div id="studentLookupStatus"
+                        class="mt-1 text-xs text-gray-500 h-4"></div>
+
+                </div>
+
+
+                <!-- MOBILE -->
+
+                <div>
+
+                    <label class="text-sm font-semibold block mb-2 text-gray-700">
+                        Mobile Number
+                    </label>
+
+                    <input id="mobileNo"
+                        type="text"
+                        tabindex="2"
+                        placeholder="Enter Mobile Number"
+                        oninput="handleEnrollmentLookup('mobileNo')"
+                        class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+
+                </div>
+
+
+                <!-- ENROLLMENT DATE -->
+
+                <div>
+
+                    <label class="text-sm font-semibold block mb-2 text-gray-700">
+                        Enrollment Date *
+                    </label>
+
+                    <input id="enrollmentDate"
+                        type="date"
+                        tabindex="3"
+                        oninput="handleEnrollmentDateChange()"
+                        class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+
+                </div>
+
+
+                <!-- COURSE -->
+
+                <div>
+
+                    <label class="text-sm font-semibold block mb-2 text-gray-700">
+                        Course *
+                    </label>
+
+                    <select id="courseName"
+                        tabindex="4"
+                        onchange="handleEnrollmentLookup('mobileNo')"
+                        class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+
+                        <option value="">Select Course</option>
+
+                        <option value="Advance Certification in Investment Law and Institutional Finance">ACIIF</option>
+
+                        <option value="Executive Certification in Corporate Social Responsibility">CSR</option>
+
+                        <option value="Executive Certification in Sexual Harassment Prevention and Workplace Diversity Laws">SHP</option>
+
+                        <option value="Certificate Course in Industrial and Labor Laws">CIL</option>
+
+                        <option value="Certificate Course in Real Estate Laws">CRE</option>
+
+                        <option value="Certification in Transfer Pricing Laws">CTP</option>
+
+                        <option value="Certificate Course in Criminal Litigation and Trial Advocacy Laws">CLTA</option>
+
+                        <option value="Advance Certificate of Companies Act, 2013">ACCA</option>
+
+                        <option value="Advance Certification in Information Technology and Social Media Laws">ACITSM</option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- BATCH MONTH -->
+
+                <div>
+
+                    <label class="text-sm font-semibold block mb-2 text-gray-700">
+                        Batch Month
+                    </label>
+
+                    <select id="batchMonth"
+                        tabindex="5"
+                        class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+
+                        <option value="">Month</option>
+
+                        <option>Jan</option>
+                        <option>Feb</option>
+                        <option>Mar</option>
+                        <option>Apr</option>
+                        <option>May</option>
+                        <option>Jun</option>
+                        <option>Jul</option>
+                        <option>Aug</option>
+                        <option>Sep</option>
+                        <option>Oct</option>
+                        <option>Nov</option>
+                        <option>Dec</option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- BATCH YEAR -->
+
+                <div>
+
+                    <label class="text-sm font-semibold block mb-2 text-gray-700">
+                        Batch Year
+                    </label>
+
+                    <input id="batchYear"
+                        type="number"
+                        tabindex="6"
+                        placeholder="YYYY"
+                        class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+                </div>
+                <!-- ENROLLMENT NUMBER -->
+                <div class="md:col-span-3">
+                    <label class="text-sm font-semibold block mb-2 text-gray-700">
+                        Enrollment Number
+                    </label>
+                    <input id="enrollmentNo"
+                        type="text"
+                        tabindex="7"
+                        placeholder="Enter Enrollment Number"
+                        class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+                </div>
+            </div>
+            <!-- BUTTONS -->
+            <div class="flex justify-end items-center gap-3 mt-5">
+                <!-- SAVE -->
+                <button onclick="saveStudent()"
+                    id="saveBtn"
+                    tabindex="8"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium transition shadow">
+                    Save Student
+                </button>
+                <!-- CLEAR -->
+                <button onclick="clearForm()"
+                    disabled
+                    tabindex="9"
+                    class="bg-gray-200 text-gray-400 px-5 py-2 rounded-lg font-medium cursor-not-allowed opacity-60">
+                    Clear
+                </button>
+            </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TABLE -->
+
+        <div class="bg-white rounded-xl shadow overflow-auto">
+
+            <table id="studentTableExcel"
+                class="w-full text-xs">
+
+                <thead class="bg-gray-100">
+
+                    <tr>
+
+                        <th class="p-3 text-left">#</th>
+
+                        <th class="p-3 text-left">Student</th>
+
+                        <th class="p-3 text-left">Mobile</th>
+
+                        <th class="p-3 text-left">Enrollment</th>
+
+                        <th class="p-3 text-left">Course</th>
+
+                        <th class="p-3 text-left">Batch</th>
+
+                        <th class="p-3 text-left">Enrollment Date</th>
+
+                        <th class="p-3 text-left">Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="studentTable"></tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- PAGINATION -->
+
+        <div class="flex justify-center items-center gap-3 mt-4">
+
+            <button onclick="prevPage()"
+                class="bg-gray-200 px-4 py-2 rounded-lg text-sm">
+
+                Prev
+
+            </button>
+
+            <div id="pageNumber"
+                class="font-semibold">
+
+                1
+
+            </div>
+
+            <button onclick="nextPage()"
+                class="bg-gray-200 px-4 py-2 rounded-lg text-sm">
+
+                Next
+
+            </button>
+
+        </div>
+
     </div>
 
-    <button type="submit">Submit</button>
 
-    <div class="final-result" id="finalResult"></div>
+    <!-- TOAST -->
 
-  </form>
-</div>
+    <div id="toast"
+        class="fixed top-5 right-5 hidden bg-black text-white px-6 py-4 rounded-xl shadow-lg z-50">
 
-<script>
+        Toast
 
-let startTime;
-let typingStarted = false;
+    </div>
 
-const typingArea = document.getElementById("typingArea");
-const liveWPM = document.getElementById("liveWPM");
-const charCount = document.getElementById("charCount");
-const finalResult = document.getElementById("finalResult");
-
-typingArea.addEventListener("input", function () {
-
-    // Start timer on first typing
-    if (!typingStarted) {
-        startTime = new Date();
-        typingStarted = true;
-    }
-
-    const text = typingArea.value;
-
-    // Character count
-    charCount.innerText = text.length;
-
-    // Time calculation
-    const currentTime = new Date();
-    const timeDiff = (currentTime - startTime) / 1000 / 60; // minutes
-
-    // Word count
-    const words = text.trim().split(/\s+/).filter(word => word !== "").length;
-
-    // WPM calculation
-    const wpm = timeDiff > 0 ? Math.round(words / timeDiff) : 0;
-
-    liveWPM.innerText = wpm;
-
-});
-
-
-document.getElementById("typingForm").addEventListener("submit", function(e){
-
-    e.preventDefault();
-
-    const endTime = new Date();
-    const totalTime = (endTime - startTime) / 1000 / 60;
-
-    const text = typingArea.value;
-
-    const words = text.trim().split(/\s+/).filter(word => word !== "").length;
-
-    const finalWPM = totalTime > 0 ? Math.round(words / totalTime) : 0;
-
-    finalResult.innerHTML = `
-        Final Typing Speed: ${finalWPM} WPM
-    `;
-
-});
-
-</script>
+    <script src="script2.js"></script>
+    <script src="typingSpeed.js"></script>
 
 </body>
+
 </html>

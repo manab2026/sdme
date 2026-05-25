@@ -819,8 +819,14 @@ function updateDashboard() {
         )
     ];
 
-    document.getElementById("courseCount").innerText =
-        courses.length;
+    const courseCount =
+        document.getElementById("courseCount");
+
+    if (courseCount) {
+
+        courseCount.innerText =
+            courses.length;
+    }
 }
 
 
