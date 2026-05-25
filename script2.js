@@ -828,8 +828,14 @@ function prevPage() {
 
 function updateDashboard() {
 
-    document.getElementById("studentCount").innerText =
-        students.length;
+    const studentCount =
+        document.getElementById("studentCount");
+
+    if (studentCount) {
+
+        studentCount.innerText =
+            students.length;
+    }
 
     const courses = [
 
@@ -841,8 +847,14 @@ function updateDashboard() {
         )
     ];
 
-    document.getElementById("courseCount").innerText =
-        courses.length;
+    const courseCount =
+        document.getElementById("courseCount");
+
+    if (courseCount) {
+
+        courseCount.innerText =
+            courses.length;
+    }
 }
 
 
