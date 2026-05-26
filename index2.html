@@ -690,35 +690,39 @@
                         placeholder="YYYY"
                         class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
                 </div>
-                <!-- ENROLLMENT NUMBER -->
-                <div class="md:col-span-3">
-                    <label class="text-sm font-semibold block mb-2 text-gray-700">
-                        Enrollment Number
-                    </label>
-                    <input id="enrollmentNo"
-                        type="text"
-                        tabindex="7"
-                        placeholder="Enter Enrollment Number"
-                        class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
-                </div>
-            </div>
-            <!-- BUTTONS -->
-            <div class="flex justify-end items-center gap-3 mt-5">
-                <!-- SAVE -->
-                <button onclick="saveStudent()"
-                    id="saveBtn"
-                    tabindex="8"
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium transition shadow">
-                    Save Student
-                </button>
-                <!-- CLEAR -->
-                <button onclick="clearForm()"
-                    disabled
-                    tabindex="9"
-                    class="bg-gray-200 text-gray-400 px-5 py-2 rounded-lg font-medium cursor-not-allowed opacity-60">
-                    Clear
-                </button>
-            </div>
+                        <!-- ENROLLMENT NUMBER -->
+                        <div class="md:col-span-3">
+                            <label class="text-sm font-semibold block mb-2 text-gray-700">
+                                Enrollment Number
+                            </label>
+                            <input id="enrollmentNo"
+                                type="text"
+                                tabindex="7"
+                                placeholder="Enter Enrollment Number"
+                                class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+                        </div>
+
+                    </div>
+
+                    <!-- BUTTONS -->
+                    <div class="flex justify-end items-center gap-3 mt-5">
+
+                        <button onclick="saveStudent()"
+                            id="saveBtn"
+                            tabindex="8"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium transition shadow">
+                            Save Student
+                        </button>
+
+                        <button onclick="clearForm()"
+                            disabled
+                            tabindex="9"
+                            class="bg-gray-200 text-gray-400 px-5 py-2 rounded-lg font-medium cursor-not-allowed opacity-60">
+                            Clear
+                        </button>
+
+                    </div>
+
                 </div>
 
             </div>
