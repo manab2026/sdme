@@ -85,6 +85,60 @@ async function loadStudents() {
 
 /* SAVE OR UPDATE */
 
+function formatStudentName(value) {
+
+    return value
+        .toLowerCase()
+        .replace(/\b[a-z]/g, letter => letter.toUpperCase());
+}
+
+function handleStudentNameInput() {
+
+    const input =
+        document.getElementById("studentName");
+
+    const cursorPosition =
+        input.selectionStart;
+
+    input.value =
+        formatStudentName(input.value);
+
+    input.setSelectionRange(cursorPosition, cursorPosition);
+
+    handleEnrollmentLookup("studentName");
+}
+
+function validateMobileNumber() {
+
+    const input =
+        document.getElementById("mobileNo");
+
+    const error =
+        document.getElementById("mobileError");
+
+    const isInvalid =
+        input.value.replace(/\D/g, "").length > 10;
+
+    input.classList.toggle("border-red-500", isInvalid);
+    input.classList.toggle("focus:ring-red-500", isInvalid);
+    input.classList.toggle("border-gray-300", !isInvalid);
+
+    if (error) {
+
+        error.innerText =
+            isInvalid ? "Mobile number must be 10 digits only" : "";
+    }
+
+    return !isInvalid;
+}
+
+function handleMobileInput() {
+
+    validateMobileNumber();
+
+    handleEnrollmentLookup("mobileNo");
+}
+
 async function saveStudent() {
 
     showLoader(true);
@@ -114,6 +168,16 @@ async function saveStudent() {
 
     const enrollmentNo =
         document.getElementById("enrollmentNo").value.trim();
+
+
+    if (!validateMobileNumber()) {
+
+        showLoader(false);
+
+        showToast("Mobile number must be 10 digits only", true);
+
+        return;
+    }
 
 
     if (!studentName || !enrollmentDate || !courseName) {
@@ -393,24 +457,6 @@ function searchStudent() {
         return (
 
             (student["Student Name"] || "")
-            .toLowerCase()
-            .includes(search)
-
-            ||
-
-            (student["Mobile No"] || "")
-            .toLowerCase()
-            .includes(search)
-
-            ||
-
-            (student["Enrollment No"] || "")
-            .toLowerCase()
-            .includes(search)
-
-            ||
-
-            (student["Course Name"] || "")
             .toLowerCase()
             .includes(search)
         );
@@ -741,8 +787,13 @@ async function lookupEnrollment(fieldName, lookupValue, courseShortName = "") {
 
 function filterByCourse() {
 
+    const filter =
+        document.getElementById("courseFilter");
+
+    if (!filter) return;
+
     const course =
-        document.getElementById("courseFilter").value;
+        filter.value;
 
     if (!course) {
 
@@ -769,6 +820,8 @@ function populateCourseFilter() {
 
     const filter =
         document.getElementById("courseFilter");
+
+    if (!filter) return;
 
     const uniqueCourses = [
 
@@ -834,7 +887,7 @@ function updateDashboard() {
     if (studentCount) {
 
         studentCount.innerText =
-            students.length;
+            String(students.length).padStart(2, "0");
     }
 
     const courses = [
@@ -886,6 +939,8 @@ function clearForm() {
     document.getElementById("studentName").value = "";
 
     document.getElementById("mobileNo").value = "";
+
+    validateMobileNumber();
 
     document.getElementById("enrollmentDate").value = "";
 
@@ -1166,5 +1221,11 @@ window.onload = () => {
 
     // AUTO CURSOR ON PAGE LOAD
     document.getElementById("studentName").focus();
+
+    startTypingTracker([
+        "studentName",
+        "mobileNo",
+        "enrollmentNo"
+    ]);
 
 };

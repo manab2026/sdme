@@ -38,73 +38,85 @@
 
         #gauge {
             position: relative;
-            width: 190px;
-            height: 150px;
-            margin: 12px auto 0;
-            background: #000000;
+            width: 200px;
+            height: 126px;
+            margin: 18px auto 0;
             overflow: hidden;
         }
 
-        #gauge::before {
-            content: "";
+        #gaugeArc {
             position: absolute;
-            left: 50%;
-            top: 17px;
-            width: 158px;
-            height: 158px;
-            border-radius: 50%;
-            background: repeating-conic-gradient(
-                from 210deg,
-                #ffffff 0deg 2deg,
-                transparent 2deg 10deg
-            );
-            mask: radial-gradient(
-                circle,
-                transparent 0 68px,
-                #000000 69px 79px,
-                transparent 80px
-            );
-            -webkit-mask: radial-gradient(
-                circle,
-                transparent 0 68px,
-                #000000 69px 79px,
-                transparent 80px
-            );
-            transform: translateX(-50%);
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #gaugeArc path {
+            fill: none;
+            stroke-width: 14;
+            stroke-linecap: round;
+        }
+
+        #gaugeTrack {
+            stroke: #e5e7eb;
+        }
+
+        #gaugeProgress {
+            stroke: url(#gaugeGradient);
+            stroke-dasharray: 239;
+            stroke-dashoffset: 239;
+            transition: stroke-dashoffset 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .bg-gray-800 #gaugeTrack,
+        .bg-gray-900 #gaugeTrack {
+            stroke: #374151;
         }
 
         #circle {
             position: absolute;
             left: 50%;
-            top: 36px;
-            width: 54px;
-            height: 54px;
-            border-radius: 50%;
-            background: #242424;
-            box-shadow: 0 0 18px 7px rgba(255, 255, 255, 0.28);
+            top: 74px;
+            z-index: 3;
+            min-width: 94px;
+            height: 40px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.82);
+            color: #111827;
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 40px;
+            text-align: center;
+            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.12);
             transform: translateX(-50%);
         }
 
-        #circle::after {
-            content: "";
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background: #0f172a;
-            border: 2px solid #ffffff;
-            transform: translate(-50%, -50%);
+        .bg-gray-800 #circle,
+        .bg-gray-900 #circle {
+            background: rgba(17, 24, 39, 0.88);
+            color: #ffffff;
+        }
+
+        #circle span + span {
+            color: #6b7280;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0;
         }
 
         #numbers {
             position: absolute;
             inset: 0;
-            color: #ffffff;
+            z-index: 2;
+            color: #6b7280;
             font-family: Arial, sans-serif;
-            font-size: 12px;
-            font-weight: 400;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .bg-gray-800 #numbers,
+        .bg-gray-900 #numbers {
+            color: #e5e7eb;
         }
 
         #numbers span {
@@ -124,129 +136,43 @@
             display: none;
         }
 
-        #numbers span:nth-child(1) {
-            left: 26px;
-            top: 116px;
-        }
-
-        #numbers span:nth-child(1)::before {
-            transform: translateX(-50%) rotate(-115deg);
-        }
-
-        #numbers span:nth-child(2) {
-            left: 39px;
-            top: 91px;
-        }
-
-        #numbers span:nth-child(2)::before {
-            transform: translateX(-50%) rotate(-92deg);
-        }
-
-        #numbers span:nth-child(3) {
-            left: 52px;
-            top: 70px;
-        }
-
-        #numbers span:nth-child(3)::before {
-            transform: translateX(-50%) rotate(-70deg);
-        }
-
-        #numbers span:nth-child(4) {
-            left: 71px;
-            top: 47px;
-        }
-
-        #numbers span:nth-child(4)::before {
-            transform: translateX(-50%) rotate(-48deg);
-        }
-
-        #numbers span:nth-child(5) {
-            left: 94px;
-            top: 35px;
-        }
-
-        #numbers span:nth-child(5)::before {
-            transform: translateX(-50%) rotate(-24deg);
-        }
-
-        #numbers span:nth-child(6) {
-            left: 119px;
-            top: 37px;
-        }
-
-        #numbers span:nth-child(6)::before {
-            transform: translateX(-50%) rotate(0deg);
-        }
-
-        #numbers span:nth-child(7) {
-            left: 142px;
-            top: 49px;
-        }
-
-        #numbers span:nth-child(7)::before {
-            transform: translateX(-50%) rotate(24deg);
-        }
-
-        #numbers span:nth-child(8) {
-            left: 158px;
-            top: 71px;
-        }
-
-        #numbers span:nth-child(8)::before {
-            transform: translateX(-50%) rotate(48deg);
-        }
-
-        #numbers span:nth-child(9) {
-            left: 164px;
-            top: 96px;
-        }
-
-        #numbers span:nth-child(9)::before {
-            transform: translateX(-50%) rotate(70deg);
-        }
-
-        #numbers span:nth-child(10) {
-            left: 154px;
-            top: 120px;
-        }
-
-        #numbers span:nth-child(10)::before {
-            transform: translateX(-50%) rotate(92deg);
-        }
-
-        #mi-km {
-            position: absolute;
-            left: 50%;
-            bottom: 10px;
-            width: 104px;
-            height: 24px;
-            border: 1px solid #2b2b2b;
-            background: #1b1b1b;
-            color: #ffffff;
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 0;
-            line-height: 22px;
-            text-align: center;
-            transform: translateX(-50%);
-        }
+        #numbers span:nth-child(1) { left: 24px; top: 106px; }
+        #numbers span:nth-child(2) { left: 53px; top: 40px; }
+        #numbers span:nth-child(3) { left: 100px; top: 23px; }
+        #numbers span:nth-child(4) { left: 147px; top: 40px; }
+        #numbers span:nth-child(5) { left: 176px; top: 106px; }
 
         #needle {
             position: absolute;
             left: 50%;
-            top: 61px;
-            width: 82px;
+            top: 104px;
+            z-index: 2;
+            width: 70px;
             height: 4px;
-            background: #ff1515;
+            background: #111827;
             border-radius: 999px;
             transform: rotate(-135deg);
             transform-origin: 0 50%;
-            box-shadow: 0 0 2px rgba(255, 0, 0, 0.7);
+            transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .bg-gray-800 #needle,
+        .bg-gray-900 #needle {
+            background: #f9fafb;
         }
 
         #needle::after {
-            content: none;
+            content: "";
+            position: absolute;
+            left: -6px;
+            top: 50%;
+            width: 12px;
+            height: 12px;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            background: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.16);
+            transform: translateY(-50%);
         }
 
         .typing-speed-value {
@@ -269,6 +195,11 @@
             </h1>
 
             <div class="flex items-center gap-3">
+
+                <button onclick="exportExcel()"
+                    class="bg-green-600 hover:bg-green-700 text-white rounded-lg px-4 py-2 text-sm font-medium shadow transition">
+                    Export Excel
+                </button>
 
                 <div class="bg-blue-600 shadow rounded-lg px-4 py-1 text-right">
 
@@ -302,14 +233,18 @@
 
                 <div class="bg-white p-4 rounded-xl shadow">
 
-                    <h2 class="text-xs text-gray-500 uppercase">
-                        Total Students
-                    </h2>
+                    <div class="flex items-center justify-between gap-3">
 
-                    <div id="studentCount"
-                        class="text-2xl font-bold mt-1">
+                        <h2 class="text-xs text-gray-500 uppercase leading-tight">
+                            Total<br>Student
+                        </h2>
 
-                        0
+                        <div id="studentCount"
+                            class="text-2xl font-bold">
+
+                            00
+
+                        </div>
 
                     </div>
 
@@ -348,22 +283,46 @@
                     <div id="gauge"
                         aria-label="Typing speedometer">
 
-                        <div id="circle"></div>
+                        <svg id="gaugeArc"
+                            viewBox="0 0 200 126"
+                            aria-hidden="true">
+
+                            <defs>
+                                <linearGradient id="gaugeGradient"
+                                    x1="18"
+                                    y1="110"
+                                    x2="182"
+                                    y2="110"
+                                    gradientUnits="userSpaceOnUse">
+                                    <stop offset="0"
+                                        stop-color="#22c55e" />
+                                    <stop offset="0.55"
+                                        stop-color="#3b82f6" />
+                                    <stop offset="1"
+                                        stop-color="#8b5cf6" />
+                                </linearGradient>
+                            </defs>
+
+                            <path id="gaugeTrack"
+                                d="M 24 104 A 76 76 0 0 1 176 104" />
+
+                            <path id="gaugeProgress"
+                                d="M 24 104 A 76 76 0 0 1 176 104" />
+
+                        </svg>
+
+                        <div id="circle">
+                            <span id="gaugeWpmValue">0</span>
+                            <span>WPM</span>
+                        </div>
 
                         <div id="numbers">
                             <span>0</span>
-                            <span>10</span>
-                            <span>20</span>
-                            <span>30</span>
-                            <span>40</span>
-                            <span>60</span>
-                            <span>80</span>
-                            <span>90</span>
+                            <span>25</span>
+                            <span>50</span>
+                            <span>75</span>
                             <span>100</span>
-                            <span>120</span>
                         </div>
-
-                        <div id="mi-km">WPM</div>
 
                         <div id="needle"></div>
 
@@ -377,20 +336,9 @@
 
                         <input type="text"
                             id="search"
-                            placeholder="Search student..."
+                            placeholder="Search name..."
                             onkeyup="searchStudent()"
                             class="w-full border rounded-lg p-2 text-sm">
-
-                        <select id="courseFilter"
-                            onchange="filterByCourse()"
-                            class="w-full border rounded-lg p-2 text-sm">
-                            <option value="">All Courses</option>
-                        </select>
-
-                        <button onclick="exportExcel()"
-                            class="w-full bg-green-600 hover:bg-green-700 text-white rounded-lg p-2 text-sm font-medium">
-                            Export Excel
-                        </button>
 
                     </div>
 
@@ -610,7 +558,7 @@
                         type="text"
                         tabindex="1"
                         placeholder="Enter Student Name"
-                        oninput="handleEnrollmentLookup('studentName')"
+                        oninput="handleStudentNameInput()"
                         class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
 
                     <div id="studentLookupStatus"
@@ -631,8 +579,12 @@
                         type="text"
                         tabindex="2"
                         placeholder="Enter Mobile Number"
-                        oninput="handleEnrollmentLookup('mobileNo')"
+                        oninput="handleMobileInput()"
+                        maxlength="11"
                         class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+
+                    <div id="mobileError"
+                        class="mt-1 text-xs text-red-500 h-4"></div>
 
                 </div>
 

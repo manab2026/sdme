@@ -4,7 +4,7 @@ let typingStartTime = null;
 
 function updateTypingSpeed(wpm, chars = 0){
 
-    const maxSpeed = 120;
+    const maxSpeed = 100;
 
     const speed =
         Math.min(wpm, maxSpeed);
@@ -13,26 +13,40 @@ function updateTypingSpeed(wpm, chars = 0){
         "typingSpeedValue"
     ).innerText = speed;
 
+    const gaugeWpm =
+        document.getElementById("gaugeWpmValue");
+
+    if (gaugeWpm) {
+
+        gaugeWpm.innerText = speed;
+    }
+
     document.getElementById(
         "typingCharCount"
-    ).innerText = chars;
+    ).innerText = `${chars} chars`;
 
     const degree =
-        -120 + (speed / maxSpeed) * 240;
+        -135 + (speed / maxSpeed) * 270;
 
-    TweenLite.to("#needle", 0.4, {
-        rotation: degree
-    });
+    const needle =
+        document.getElementById("needle");
 
-    const circumference = 315;
+    if (needle) {
 
-    const offset =
-        circumference -
-        (speed / maxSpeed) * circumference;
+        needle.style.transform =
+            `rotate(${degree}deg)`;
+    }
 
-    document.getElementById(
-        "gaugeProgress"
-    ).style.strokeDashoffset = offset;
+    const progress =
+        document.getElementById("gaugeProgress");
+
+    if (progress) {
+
+        const arcLength = 239;
+
+        progress.style.strokeDashoffset =
+            arcLength - (speed / maxSpeed) * arcLength;
+    }
 }
 
 
