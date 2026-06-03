@@ -358,14 +358,29 @@
 
                 <div id="tab-b" class="tab-pane hidden">
 
-                    <div class="bg-white p-4 rounded-xl shadow">
-                        <h3 class="text-sm font-semibold mb-2">YouTube</h3>
-                        <div class="w-full aspect-video bg-black rounded overflow-hidden">
-                            <!-- Small YouTube embed; replace src with desired video -->
-                            <iframe id="yt-player" class="w-full h-full" src="https://www.youtube.com/embed/KL_WCuAJJmg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="px-1">
+                        <div class="bg-gray-900 rounded-3xl shadow-2xl overflow-hidden relative border border-gray-800">
+                            <button onclick="openYoutubeModal()" class="absolute top-5 right-5 z-10 w-10 h-10 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center transition shadow-lg">
+                                <i class="fas fa-search text-white text-sm"></i>
+                            </button>
+                            <div class="w-full aspect-video bg-black">
+                                <iframe id="yt-player" class="w-full h-full" src="https://www.youtube.com/embed/KL_WCuAJJmg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            </div>
                         </div>
                     </div>
 
+                </div>
+
+                <!-- YouTube URL Modal -->
+                <div id="youtubeModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div class="bg-white rounded-xl shadow-lg p-6 w-80">
+                        <h3 class="text-lg font-semibold mb-4">Paste YouTube URL</h3>
+                        <input id="youtubeUrlInput" type="text" placeholder="https://www.youtube.com/watch?v=..." class="w-full border rounded-lg p-2 text-sm mb-4 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <div class="flex justify-end gap-2">
+                            <button onclick="closeYoutubeModal()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition">Cancel</button>
+                            <button onclick="loadYoutubeUrl()" class="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition">Load</button>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="tab-c" class="tab-pane hidden">
@@ -612,7 +627,7 @@
                         tabindex="2"
                         placeholder="Enter Mobile Number"
                         oninput="handleMobileInput()"
-                        maxlength="11"
+                        maxlength="20"
                         class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
 
                     <div id="mobileError"
@@ -869,6 +884,60 @@
 
             document.addEventListener('DOMContentLoaded', function(){ setActive('a'); });
         })();
+
+        // YouTube URL Modal Functions
+        function openYoutubeModal() {
+            document.getElementById('youtubeModal').classList.remove('hidden');
+            document.getElementById('youtubeUrlInput').focus();
+        }
+
+        function closeYoutubeModal() {
+            document.getElementById('youtubeModal').classList.add('hidden');
+            document.getElementById('youtubeUrlInput').value = '';
+        }
+
+        function extractYoutubeId(url) {
+            const patterns = [
+                /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/,
+                /youtube\.com\/embed\/([^&\n?#]+)/
+            ];
+            for (let pattern of patterns) {
+                const match = url.match(pattern);
+                if (match && match[1]) return match[1];
+            }
+            return null;
+        }
+
+        function loadYoutubeUrl() {
+            const url = document.getElementById('youtubeUrlInput').value.trim();
+            if (!url) {
+                alert('Please enter a valid YouTube URL');
+                return;
+            }
+            const videoId = extractYoutubeId(url);
+            if (videoId) {
+                document.getElementById('yt-player').src = 'https://www.youtube.com/embed/' + videoId;
+                closeYoutubeModal();
+            } else {
+                alert('Invalid YouTube URL');
+            }
+        }
+
+        // Allow Enter key to load video
+        document.addEventListener('keydown', function(e) {
+            const modal = document.getElementById('youtubeModal');
+            if (!modal.classList.contains('hidden') && e.key === 'Enter') {
+                loadYoutubeUrl();
+            }
+        });
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('youtubeModal');
+            if (e.target === modal) {
+                closeYoutubeModal();
+            }
+        });
     </script>
 
 </body>
