@@ -231,18 +231,124 @@
 
             <div class="space-y-3">
 
-                <div class="bg-white p-4 rounded-xl shadow">
+                <!-- Tabs header -->
+                <div class="bg-white p-2 rounded-xl shadow flex gap-2">
+                    <button class="tab-btn px-3 py-2 rounded-md text-sm font-medium bg-blue-600 text-white" data-tab="a">Tab A</button>
+                    <button class="tab-btn px-3 py-2 rounded-md text-sm font-medium bg-gray-100 text-gray-700" data-tab="b">Tab B</button>
+                    <button class="tab-btn px-3 py-2 rounded-md text-sm font-medium bg-gray-100 text-gray-700" data-tab="c">Tab C</button>
+                </div>
 
-                    <div class="flex items-center justify-between gap-3">
+                <!-- Tab panes -->
+                <div id="tab-a" class="tab-pane">
 
-                        <h2 class="text-xs text-gray-500 uppercase leading-tight">
-                            Total<br>Student
+                    <div class="bg-white p-4 rounded-xl shadow">
+
+                        <div class="flex items-center justify-between gap-3">
+
+                            <h2 class="text-xs text-gray-500 uppercase leading-tight">
+                                Total<br>Student
+                            </h2>
+
+                            <div id="studentCount"
+                                class="text-2xl font-bold">
+
+                                00
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="typing-speed-card bg-white p-4 rounded-xl shadow mt-3">
+
+                        <h2 class="text-xs text-gray-500 uppercase">
+                            Typing Speed
                         </h2>
 
-                        <div id="studentCount"
-                            class="text-2xl font-bold">
+                        <div class="mt-2 flex items-end justify-between">
 
-                            00
+                            <div>
+
+                                <div id="typingSpeedValue"
+                                    class="typing-speed-value text-2xl font-bold">
+
+                                    0
+
+                                </div>
+
+                                <div class="text-xs text-gray-500 mt-1">
+                                    WPM
+                                </div>
+
+                            </div>
+
+                            <div id="typingCharCount"
+                                class="text-xs text-gray-500">
+                                0 chars
+                            </div>
+
+                        </div>
+
+                        <div id="gauge"
+                            aria-label="Typing speedometer">
+
+                            <svg id="gaugeArc"
+                                viewBox="0 0 200 126"
+                                aria-hidden="true">
+
+                                <defs>
+                                    <linearGradient id="gaugeGradient"
+                                        x1="18"
+                                        y1="110"
+                                        x2="182"
+                                        y2="110"
+                                        gradientUnits="userSpaceOnUse">
+                                        <stop offset="0"
+                                            stop-color="#22c55e" />
+                                        <stop offset="0.55"
+                                            stop-color="#3b82f6" />
+                                        <stop offset="1"
+                                            stop-color="#8b5cf6" />
+                                    </linearGradient>
+                                </defs>
+
+                                <path id="gaugeTrack"
+                                    d="M 24 104 A 76 76 0 0 1 176 104" />
+
+                                <path id="gaugeProgress"
+                                    d="M 24 104 A 76 76 0 0 1 176 104" />
+
+                            </svg>
+
+                            <div id="circle">
+                                <span id="gaugeWpmValue">0</span>
+                                <span>WPM</span>
+                            </div>
+
+                            <div id="numbers">
+                                <span>0</span>
+                                <span>25</span>
+                                <span>50</span>
+                                <span>75</span>
+                                <span>100</span>
+                            </div>
+
+                            <div id="needle"></div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow p-4 mt-3">
+
+                        <div class="space-y-3">
+
+                            <input type="text"
+                                id="search"
+                                placeholder="Search name..."
+                                onkeyup="searchStudent()"
+                                class="w-full border rounded-lg p-2 text-sm">
 
                         </div>
 
@@ -250,96 +356,22 @@
 
                 </div>
 
-                <div class="typing-speed-card bg-white p-4 rounded-xl shadow">
+                <div id="tab-b" class="tab-pane hidden">
 
-                    <h2 class="text-xs text-gray-500 uppercase">
-                        Typing Speed
-                    </h2>
-
-                    <div class="mt-2 flex items-end justify-between">
-
-                        <div>
-
-                            <div id="typingSpeedValue"
-                                class="typing-speed-value text-2xl font-bold">
-
-                                0
-
-                            </div>
-
-                            <div class="text-xs text-gray-500 mt-1">
-                                WPM
-                            </div>
-
+                    <div class="bg-white p-4 rounded-xl shadow">
+                        <h3 class="text-sm font-semibold mb-2">YouTube</h3>
+                        <div class="w-full aspect-video bg-black rounded overflow-hidden">
+                            <!-- Small YouTube embed; replace src with desired video -->
+                            <iframe id="yt-player" class="w-full h-full" src="https://www.youtube.com/embed/KL_WCuAJJmg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         </div>
-
-                        <div id="typingCharCount"
-                            class="text-xs text-gray-500">
-                            0 chars
-                        </div>
-
-                    </div>
-
-                    <div id="gauge"
-                        aria-label="Typing speedometer">
-
-                        <svg id="gaugeArc"
-                            viewBox="0 0 200 126"
-                            aria-hidden="true">
-
-                            <defs>
-                                <linearGradient id="gaugeGradient"
-                                    x1="18"
-                                    y1="110"
-                                    x2="182"
-                                    y2="110"
-                                    gradientUnits="userSpaceOnUse">
-                                    <stop offset="0"
-                                        stop-color="#22c55e" />
-                                    <stop offset="0.55"
-                                        stop-color="#3b82f6" />
-                                    <stop offset="1"
-                                        stop-color="#8b5cf6" />
-                                </linearGradient>
-                            </defs>
-
-                            <path id="gaugeTrack"
-                                d="M 24 104 A 76 76 0 0 1 176 104" />
-
-                            <path id="gaugeProgress"
-                                d="M 24 104 A 76 76 0 0 1 176 104" />
-
-                        </svg>
-
-                        <div id="circle">
-                            <span id="gaugeWpmValue">0</span>
-                            <span>WPM</span>
-                        </div>
-
-                        <div id="numbers">
-                            <span>0</span>
-                            <span>25</span>
-                            <span>50</span>
-                            <span>75</span>
-                            <span>100</span>
-                        </div>
-
-                        <div id="needle"></div>
-
                     </div>
 
                 </div>
 
-                <div class="bg-white rounded-xl shadow p-4">
+                <div id="tab-c" class="tab-pane hidden">
 
-                    <div class="space-y-3">
-
-                        <input type="text"
-                            id="search"
-                            placeholder="Search name..."
-                            onkeyup="searchStudent()"
-                            class="w-full border rounded-lg p-2 text-sm">
-
+                    <div class="bg-white p-4 rounded-xl shadow">
+                        <!-- Empty for now -->
                     </div>
 
                 </div>
@@ -638,6 +670,7 @@
                         <option value="Advance Certificate of Companies Act, 2013">ACCA</option>
 
                         <option value="Advance Certification in Information Technology and Social Media Laws">ACITSM</option>
+                        <option value="Diploma in Entrepreneurship Administration and Business Laws">DEABL</option>
 
                     </select>
 
@@ -807,6 +840,36 @@
 
     <script src="script2.js"></script>
     <script src="typingSpeed.js"></script>
+
+    <script>
+        (function(){
+            const tabs = document.querySelectorAll('.tab-btn');
+            const panes = document.querySelectorAll('.tab-pane');
+
+            function setActive(tab){
+                tabs.forEach(b=>{
+                    if(b.dataset.tab===tab){
+                        b.classList.add('bg-blue-600','text-white');
+                        b.classList.remove('bg-gray-100','text-gray-700');
+                    } else {
+                        b.classList.remove('bg-blue-600','text-white');
+                        b.classList.add('bg-gray-100','text-gray-700');
+                    }
+                });
+
+                panes.forEach(p=>{
+                    if(p.id === 'tab-'+tab) p.classList.remove('hidden'); else p.classList.add('hidden');
+                });
+            }
+
+            document.addEventListener('click', function(e){
+                const btn = e.target.closest('.tab-btn');
+                if(btn) setActive(btn.dataset.tab);
+            });
+
+            document.addEventListener('DOMContentLoaded', function(){ setActive('a'); });
+        })();
+    </script>
 
 </body>
 
