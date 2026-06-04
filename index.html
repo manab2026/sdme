@@ -231,18 +231,124 @@
 
             <div class="space-y-3">
 
-                <div class="bg-white p-4 rounded-xl shadow">
+                <!-- Tabs header -->
+                <div class="bg-white p-2 rounded-xl shadow flex gap-2">
+                    <button class="tab-btn px-3 py-2 rounded-md text-sm font-medium bg-blue-600 text-white" data-tab="a">Tab A</button>
+                    <button class="tab-btn px-3 py-2 rounded-md text-sm font-medium bg-gray-100 text-gray-700" data-tab="b">Tab B</button>
+                    <button class="tab-btn px-3 py-2 rounded-md text-sm font-medium bg-gray-100 text-gray-700" data-tab="c">Tab C</button>
+                </div>
 
-                    <div class="flex items-center justify-between gap-3">
+                <!-- Tab panes -->
+                <div id="tab-a" class="tab-pane">
 
-                        <h2 class="text-xs text-gray-500 uppercase leading-tight">
-                            Total<br>Student
+                    <div class="bg-white p-4 rounded-xl shadow">
+
+                        <div class="flex items-center justify-between gap-3">
+
+                            <h2 class="text-xs text-gray-500 uppercase leading-tight">
+                                Total<br>Student
+                            </h2>
+
+                            <div id="studentCount"
+                                class="text-2xl font-bold">
+
+                                00
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="typing-speed-card bg-white p-4 rounded-xl shadow mt-3">
+
+                        <h2 class="text-xs text-gray-500 uppercase">
+                            Typing Speed
                         </h2>
 
-                        <div id="studentCount"
-                            class="text-2xl font-bold">
+                        <div class="mt-2 flex items-end justify-between">
 
-                            00
+                            <div>
+
+                                <div id="typingSpeedValue"
+                                    class="typing-speed-value text-2xl font-bold">
+
+                                    0
+
+                                </div>
+
+                                <div class="text-xs text-gray-500 mt-1">
+                                    WPM
+                                </div>
+
+                            </div>
+
+                            <div id="typingCharCount"
+                                class="text-xs text-gray-500">
+                                0 chars
+                            </div>
+
+                        </div>
+
+                        <div id="gauge"
+                            aria-label="Typing speedometer">
+
+                            <svg id="gaugeArc"
+                                viewBox="0 0 200 126"
+                                aria-hidden="true">
+
+                                <defs>
+                                    <linearGradient id="gaugeGradient"
+                                        x1="18"
+                                        y1="110"
+                                        x2="182"
+                                        y2="110"
+                                        gradientUnits="userSpaceOnUse">
+                                        <stop offset="0"
+                                            stop-color="#22c55e" />
+                                        <stop offset="0.55"
+                                            stop-color="#3b82f6" />
+                                        <stop offset="1"
+                                            stop-color="#8b5cf6" />
+                                    </linearGradient>
+                                </defs>
+
+                                <path id="gaugeTrack"
+                                    d="M 24 104 A 76 76 0 0 1 176 104" />
+
+                                <path id="gaugeProgress"
+                                    d="M 24 104 A 76 76 0 0 1 176 104" />
+
+                            </svg>
+
+                            <div id="circle">
+                                <span id="gaugeWpmValue">0</span>
+                                <span>WPM</span>
+                            </div>
+
+                            <div id="numbers">
+                                <span>0</span>
+                                <span>25</span>
+                                <span>50</span>
+                                <span>75</span>
+                                <span>100</span>
+                            </div>
+
+                            <div id="needle"></div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow p-4 mt-3">
+
+                        <div class="space-y-3">
+
+                            <input type="text"
+                                id="search"
+                                placeholder="Search name..."
+                                onkeyup="searchStudent()"
+                                class="w-full border rounded-lg p-2 text-sm">
 
                         </div>
 
@@ -250,96 +356,37 @@
 
                 </div>
 
-                <div class="typing-speed-card bg-white p-4 rounded-xl shadow">
+                <div id="tab-b" class="tab-pane hidden">
 
-                    <h2 class="text-xs text-gray-500 uppercase">
-                        Typing Speed
-                    </h2>
-
-                    <div class="mt-2 flex items-end justify-between">
-
-                        <div>
-
-                            <div id="typingSpeedValue"
-                                class="typing-speed-value text-2xl font-bold">
-
-                                0
-
+                    <div class="px-1">
+                        <div class="bg-gray-900 rounded-3xl shadow-2xl overflow-hidden relative border border-gray-800">
+                            <button onclick="openYoutubeModal()" class="absolute top-5 right-5 z-10 w-10 h-10 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center transition shadow-lg">
+                                <i class="fas fa-search text-white text-sm"></i>
+                            </button>
+                            <div class="w-full aspect-video bg-black">
+                                <iframe id="yt-player" class="w-full h-full" src="https://www.youtube.com/embed/KL_WCuAJJmg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                             </div>
-
-                            <div class="text-xs text-gray-500 mt-1">
-                                WPM
-                            </div>
-
                         </div>
-
-                        <div id="typingCharCount"
-                            class="text-xs text-gray-500">
-                            0 chars
-                        </div>
-
-                    </div>
-
-                    <div id="gauge"
-                        aria-label="Typing speedometer">
-
-                        <svg id="gaugeArc"
-                            viewBox="0 0 200 126"
-                            aria-hidden="true">
-
-                            <defs>
-                                <linearGradient id="gaugeGradient"
-                                    x1="18"
-                                    y1="110"
-                                    x2="182"
-                                    y2="110"
-                                    gradientUnits="userSpaceOnUse">
-                                    <stop offset="0"
-                                        stop-color="#22c55e" />
-                                    <stop offset="0.55"
-                                        stop-color="#3b82f6" />
-                                    <stop offset="1"
-                                        stop-color="#8b5cf6" />
-                                </linearGradient>
-                            </defs>
-
-                            <path id="gaugeTrack"
-                                d="M 24 104 A 76 76 0 0 1 176 104" />
-
-                            <path id="gaugeProgress"
-                                d="M 24 104 A 76 76 0 0 1 176 104" />
-
-                        </svg>
-
-                        <div id="circle">
-                            <span id="gaugeWpmValue">0</span>
-                            <span>WPM</span>
-                        </div>
-
-                        <div id="numbers">
-                            <span>0</span>
-                            <span>25</span>
-                            <span>50</span>
-                            <span>75</span>
-                            <span>100</span>
-                        </div>
-
-                        <div id="needle"></div>
-
                     </div>
 
                 </div>
 
-                <div class="bg-white rounded-xl shadow p-4">
+                <!-- YouTube URL Modal -->
+                <div id="youtubeModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div class="bg-white rounded-xl shadow-lg p-6 w-80">
+                        <h3 class="text-lg font-semibold mb-4">Paste YouTube URL</h3>
+                        <input id="youtubeUrlInput" type="text" placeholder="https://www.youtube.com/watch?v=..." class="w-full border rounded-lg p-2 text-sm mb-4 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <div class="flex justify-end gap-2">
+                            <button onclick="closeYoutubeModal()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition">Cancel</button>
+                            <button onclick="loadYoutubeUrl()" class="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition">Load</button>
+                        </div>
+                    </div>
+                </div>
 
-                    <div class="space-y-3">
+                <div id="tab-c" class="tab-pane hidden">
 
-                        <input type="text"
-                            id="search"
-                            placeholder="Search name..."
-                            onkeyup="searchStudent()"
-                            class="w-full border rounded-lg p-2 text-sm">
-
+                    <div class="bg-white p-4 rounded-xl shadow">
+                        <!-- Empty for now -->
                     </div>
 
                 </div>
@@ -381,10 +428,16 @@
                         Student Form
                     </h2>
 
-                    <div id="entryNo"
+                    <div id="formMode"
                         class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
 
-                        Entry No: 0
+                        Add Mode
+
+                    </div>
+
+                </div>
+
+
                 <!-- SETTINGS BUTTON -->
 
                 <div class="relative">
@@ -574,7 +627,7 @@
                         tabindex="2"
                         placeholder="Enter Mobile Number"
                         oninput="handleMobileInput()"
-                        maxlength="11"
+                        maxlength="20"
                         class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
 
                     <div id="mobileError"
@@ -802,6 +855,90 @@
 
     <script src="script2.js"></script>
     <script src="typingSpeed.js"></script>
+
+    <script>
+        (function(){
+            const tabs = document.querySelectorAll('.tab-btn');
+            const panes = document.querySelectorAll('.tab-pane');
+
+            function setActive(tab){
+                tabs.forEach(b=>{
+                    if(b.dataset.tab===tab){
+                        b.classList.add('bg-blue-600','text-white');
+                        b.classList.remove('bg-gray-100','text-gray-700');
+                    } else {
+                        b.classList.remove('bg-blue-600','text-white');
+                        b.classList.add('bg-gray-100','text-gray-700');
+                    }
+                });
+
+                panes.forEach(p=>{
+                    if(p.id === 'tab-'+tab) p.classList.remove('hidden'); else p.classList.add('hidden');
+                });
+            }
+
+            document.addEventListener('click', function(e){
+                const btn = e.target.closest('.tab-btn');
+                if(btn) setActive(btn.dataset.tab);
+            });
+
+            document.addEventListener('DOMContentLoaded', function(){ setActive('a'); });
+        })();
+
+        // YouTube URL Modal Functions
+        function openYoutubeModal() {
+            document.getElementById('youtubeModal').classList.remove('hidden');
+            document.getElementById('youtubeUrlInput').focus();
+        }
+
+        function closeYoutubeModal() {
+            document.getElementById('youtubeModal').classList.add('hidden');
+            document.getElementById('youtubeUrlInput').value = '';
+        }
+
+        function extractYoutubeId(url) {
+            const patterns = [
+                /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/,
+                /youtube\.com\/embed\/([^&\n?#]+)/
+            ];
+            for (let pattern of patterns) {
+                const match = url.match(pattern);
+                if (match && match[1]) return match[1];
+            }
+            return null;
+        }
+
+        function loadYoutubeUrl() {
+            const url = document.getElementById('youtubeUrlInput').value.trim();
+            if (!url) {
+                alert('Please enter a valid YouTube URL');
+                return;
+            }
+            const videoId = extractYoutubeId(url);
+            if (videoId) {
+                document.getElementById('yt-player').src = 'https://www.youtube.com/embed/' + videoId;
+                closeYoutubeModal();
+            } else {
+                alert('Invalid YouTube URL');
+            }
+        }
+
+        // Allow Enter key to load video
+        document.addEventListener('keydown', function(e) {
+            const modal = document.getElementById('youtubeModal');
+            if (!modal.classList.contains('hidden') && e.key === 'Enter') {
+                loadYoutubeUrl();
+            }
+        });
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('youtubeModal');
+            if (e.target === modal) {
+                closeYoutubeModal();
+            }
+        });
+    </script>
 
 </body>
 

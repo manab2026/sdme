@@ -876,7 +876,7 @@ function prevPage() {
 function updateEntryNumber() {
 
     const entryNo =
-        document.getElementById("entryNo");
+        document.getElementById("formMode");
 
     if (!entryNo) return;
 
