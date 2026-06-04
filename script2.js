@@ -242,9 +242,6 @@ async function saveStudent() {
             document.getElementById("saveBtn").innerText =
                 "Save Student";
 
-            document.getElementById("formMode").innerText =
-                "Add Student";
-
             // AUTO FOCUS
             document.getElementById("studentName").focus();
 
@@ -270,9 +267,6 @@ function editStudent(index) {
     const student = filteredStudents[index];
 
     editMode = true;
-
-    document.getElementById("formMode").innerText =
-        "Edit Student";
 
     document.getElementById("saveBtn").innerText =
         "Update Student";
@@ -879,6 +873,20 @@ function prevPage() {
 
 /* DASHBOARD */
 
+function updateEntryNumber() {
+
+    const entryNo =
+        document.getElementById("entryNo");
+
+    if (!entryNo) return;
+
+    const nextEntry =
+        students.length + 1;
+
+    entryNo.innerText =
+        `Entry No: ${nextEntry}`;
+}
+
 function updateDashboard() {
 
     const studentCount =
@@ -889,6 +897,8 @@ function updateDashboard() {
         studentCount.innerText =
             String(students.length).padStart(2, "0");
     }
+
+    updateEntryNumber();
 
     const courses = [
 
